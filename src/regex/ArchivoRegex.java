@@ -19,7 +19,7 @@ public class ArchivoRegex{ //CLASE COMPILADOR
     
     
 
-    public void matcher(String cadena){ //Método que se encarga de identificar el modo de direccionamiento a través de expresiones regulares y de validarlos
+    public void matcher(String mnemonico, String oper){ //Método que se encarga de identificar el modo de direccionamiento a través de expresiones regulares y de validarlos
         //NOTAAAAAAAAAAA: AGREGAR EL FUNCIONAMIENTO EN ASSCCI PREGUNTA OBLIGATORIA EL LUNES 
         opcode= new FileMan();
         Pattern expresionINH = Pattern.compile("^([a-zA-Z]{3,6})$"); // Identifica el modo de direccionamiento INHERENTE
@@ -32,63 +32,63 @@ public class ArchivoRegex{ //CLASE COMPILADOR
         Pattern comentarios = Pattern.compile("((\\*)[a-zA-Z0-9\\*( )]*)");//Identifica los comentarios 
 
 
-        Matcher inh = expresionINH.matcher(cadena);//Valida la expresión INHERENTE
-        Matcher imm = expresionIMM.matcher(cadena);//Valida la expresión INMEDIATO
-        Matcher ext = expresionEXT.matcher(cadena);//Valida la expresión EXTENDIDO
-        Matcher dir = expresionDIR.matcher(cadena);//Valida la expresión DIRCETO
-        Matcher rel = expresionREL.matcher(cadena);//Valida la expresión RELATIVO       
-        Matcher indx = expresionINDX.matcher(cadena);//Valida la expresión INDEXADO RESPECTO A "X"
-        Matcher indy = expresionINDY.matcher(cadena);//Valida la expresión INDEXADO RESPECTO A "Y"
-        Matcher coment = comentarios.matcher(cadena);//Valida comentarios
+        Matcher inh = expresionINH.matcher(mnemonico);//Valida la expresión INHERENTE
+        Matcher imm = expresionIMM.matcher(mnemonico);//Valida la expresión INMEDIATO
+        Matcher ext = expresionEXT.matcher(mnemonico);//Valida la expresión EXTENDIDO
+        Matcher dir = expresionDIR.matcher(mnemonico);//Valida la expresión DIRCETO
+        Matcher rel = expresionREL.matcher(mnemonico);//Valida la expresión RELATIVO       
+        Matcher indx = expresionINDX.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "X"
+        Matcher indy = expresionINDY.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "Y"
+        Matcher coment = comentarios.matcher(mnemonico);//Valida comentarios
 
       //En esta sección identificamos el modo de direccionamiento, y con el método readOpcodes obtenemos el opcode del mnemónico de acuerdo a su modo de direccionamiento  
         if(inh.find()){
             System.out.println("inh");
-            String[] parts = cadena.split(" ");
-            String mnemonico = parts[0];
-            String operando = parts[1];       
+            /*String[] parts = cadena.split(" ");
+            Str/*Sting mnemonico = parts[0];
+            String operando = parts[1];*/       
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"inh"));
         }
         if(imm.find()){
             System.out.println("imm");
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1];   
+            String operando = parts[1];*/   
             System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"imm"));
         }
         if(ext.find()) { 
             System.out.println("Extendido");  
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1];   
+            String operando = parts[1];*/   
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"ext"));
         }  
         if(dir.find()){
             System.out.println("Directa");
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1];   
+            String operando = parts[1];*/   
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"dir"));
         }
         if(rel.find()){
             System.out.println("Relativo");
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1];  
+            String operando = parts[1];*/  
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"rel"));
         }
         if(indx.find()){
             System.out.println("Indexado en X");
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1]; 
+            String operando = parts[1];*/ 
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"indx"));
         }
         if(indy.find()){
             System.out.println("Indexado en Y");
-            String[] parts = cadena.split(" ");
+            /*String[] parts = cadena.split(" ");
             String mnemonico = parts[0];
-            String operando = parts[1]; 
+            String operando = parts[1];*/ 
              System.out.println(opcode.readOpcodes(mnemonico.toLowerCase(),"indy"));
         }
         

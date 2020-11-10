@@ -5,11 +5,9 @@
  */
 package compiladorasc;
 
-
-
 import regex.*;
 import filemanagment.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  *
@@ -23,14 +21,15 @@ public class CompiladorASC {
     public static void main(String[] args) {
         //ArchivoRegex regex = new ArchivoRegex();
         //regex.matcher("LDY 6500");
-        char prueba = 'k';
-        int asciivalor = prueba; 
-        String operandoConvertido = Integer.toHexString(11);
-         System.out.println(asciivalor);
+        Datos prueba = new Datos ("BRCLR $07,X,#$80 SALTO2");
+        System.out.println(prueba.mnemonico);
+        System.out.println(prueba.etiqueta);
+        System.out.println(prueba.direccionamiento);
+        prueba.ImprimirOps();
         
     }
     
-        }
+}
       
     
     

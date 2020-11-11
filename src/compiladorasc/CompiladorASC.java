@@ -19,13 +19,14 @@ public class CompiladorASC {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //ArchivoRegex regex = new ArchivoRegex();
-        //regex.matcher("LDY 6500");
-        Datos prueba = new Datos ("BRCLR $07,X,#$80 SALTO2");
-        System.out.println(prueba.mnemonico);
-        System.out.println(prueba.etiqueta);
-        System.out.println(prueba.direccionamiento);
-        prueba.ImprimirOps();
+        FileMan file = new FileMan();
+        Datos prueba = new Datos ("BRCLR $07");
+        //prueba.ImprimirDatos();
+        file.instrucciones.add(prueba);
+        file.imprimir();
+    }
+    
+    public void Compilador(){
         
     }
     

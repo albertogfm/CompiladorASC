@@ -11,7 +11,6 @@ public class Datos {
     int saltos, i;
     public Datos(String instruccion){
         SetSplits(instruccion);
-        
     }
     void SetSplits(String instruccion){
         if(instruccion.length()<4)
@@ -58,11 +57,15 @@ public class Datos {
                             this.direccionamiento="indy";
                     }    
         }
-    }       
     }
-    void SetDireccionamiento(){
+        this.direccionamiento = SetDireccionamiento();
+        this.opcode=file.readOpcodes(this.mnemonico, this.direccionamiento);
+    }
+    String SetDireccionamiento(){
+        String direccion;
         ArchivoRegex regex = new ArchivoRegex();
-        regex.matcher("hola","adios");
+        direccion=regex.matcher(this.mnemonico,this.operandos,this.direccionamiento);
+        return direccion;
     }
     void convertidorhex(String operando){ //CONVERTIR LOS OPERANDOS A HEXADECIMAL
          if (operando.charAt(0)=='$'){ //metodo para insertar en la lista (compilador) cuando ya estan en hexadecimal
@@ -74,9 +77,15 @@ public class Datos {
         
          } 
     }
-    public void ImprimirOps(){
-        for (int i=0;i<this.operandos.size();i++)
+    public void ImprimirDatos(){
+        System.out.println("Mnemonico: "+this.mnemonico);
+        System.out.println("Modo de direccionamiento: "+this.direccionamiento);
+        System.out.println("Operando(s): "); 
+        for (int i=0;i<this.operandos.size();i++){
             System.out.println(this.operandos.get(i));
-            System.out.println("");
+        }
+        System.out.println("OpCode: "+this.opcode);
+        
+    
     }
 }

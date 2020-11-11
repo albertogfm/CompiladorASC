@@ -14,7 +14,7 @@ public class FileMan{
 
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
-
+    public Queue <Datos> instrucciones = new LinkedList <>();
 
     public boolean leerArchivo(String nombreAr) {
         File file = new File(".\\files\\read\\"+nombreAr+".ASC");
@@ -75,5 +75,8 @@ public class FileMan{
             System.out.println("Scanner unable to use");
         }
         return null;
+    }
+    public void imprimir(){
+        System.out.println(this.instrucciones.peek().mnemonico);
     }
 }

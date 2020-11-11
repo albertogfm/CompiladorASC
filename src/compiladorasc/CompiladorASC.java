@@ -5,11 +5,9 @@
  */
 package compiladorasc;
 
-
-
 import regex.*;
 import filemanagment.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  *
@@ -21,13 +19,19 @@ public class CompiladorASC {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        FileMan trataFiles = new FileMan();
-        //System.out.println(trataFiles.readOpcodes("adca","INDX"));
-        trataFiles.leerArchivo("ERROR");
-        for (int i = 0; i < 500; i++) {
-            System.out.println(trataFiles.lineasArchivoASC.get(i)); 
-        }
-      
+        FileMan file = new FileMan();
+        Datos prueba = new Datos ("BRCLR $07");
+        //prueba.ImprimirDatos();
+        file.instrucciones.add(prueba);
+        file.imprimir();
+    }
+    
+    public void Compilador(){
+        
     }
     
 }
+      
+    
+    
+

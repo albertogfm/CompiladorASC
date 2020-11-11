@@ -3,12 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/compiladorasc/CompiladorASC.java</file>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/output/Output.java</file>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/filemanagment/FileMan.java</file>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/graficas/Interfaz.java</file>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/regex/ArchivoRegex.java</file>
-            <file>file:/C:/Users/alber/Documentos/NetBeansProjects/CompiladorASC/src/errores/Error.java</file>
+            <file>file:/C:/Users/1ZW05LA_RS3/Documents/ProyectoBuenoEyPC/CompiladorASC/src/filemanagment/FileMan.java</file>
+            <file>file:/C:/Users/1ZW05LA_RS3/Documents/ProyectoBuenoEyPC/CompiladorASC/src/compiladorasc/CompiladorASC.java</file>
+            <file>file:/C:/Users/1ZW05LA_RS3/Documents/ProyectoBuenoEyPC/CompiladorASC/src/regex/ArchivoRegex.java</file>
         </group>
     </open-files>
 </project-private>

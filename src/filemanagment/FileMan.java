@@ -18,7 +18,7 @@ public class FileMan extends JFrame{
     public ArrayList<String> opCodesFile = new ArrayList<>();
 
 
-    public boolean leerArchivo(String nombreAr) {
+    public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);
         if(!file.exists()){
                 System.out.println("\tNo se encontró el archivo");
@@ -62,10 +62,8 @@ public class FileMan extends JFrame{
         try {
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
-
                 String linea = sc.nextLine();//Lee el contenido del archivo
                 String[] nemonYopcode = linea.split(",");
-
                 if(nemon.equals(nemonYopcode[0])){
                     sc.close();
                     return nemonYopcode[1];
@@ -78,7 +76,7 @@ public class FileMan extends JFrame{
         }
         return null;
     }
-    public String fileSelector(){
+    public String fileSelector(){// Opens a JFrame to select a file in our directory
         FileDialog fc;
         fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
         fc.setDirectory("C:\\");

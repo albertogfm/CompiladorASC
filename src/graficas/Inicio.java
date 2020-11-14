@@ -5,6 +5,8 @@
  */
 package graficas;
 
+import java.awt.FileDialog;
+
 /**
  *
  * @author alber
@@ -16,6 +18,7 @@ public class Inicio extends javax.swing.JFrame {
      */
     public Inicio() {
         initComponents();
+        
     }
 
     /**
@@ -145,7 +148,15 @@ public class Inicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        FileDialog fc;
+        fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+        fc.setDirectory("C:\\");
+        fc.setVisible(true);
+        String fn = fc.getFile();
+        if (fn == null)
+          System.out.println("You cancelled the choice");
+        else
+          System.out.println("You chose " + fn);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

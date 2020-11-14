@@ -17,7 +17,7 @@ public class FileMan{
 
 
     public boolean leerArchivo(String nombreAr) {
-        File file = new File(".\\files\\read\\"+nombreAr+".ASC");
+        File file = new File(nombreAr);
         if(!file.exists()){
                 System.out.println("\tNo se encontró el archivo");
                 return false;

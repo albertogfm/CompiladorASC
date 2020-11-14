@@ -24,7 +24,7 @@ public class CompiladorASC {
     public static void main(String[] args) {
         Inicio ini = new Inicio();
         ini.setVisible(true);
-     
+        
     }
     
 }

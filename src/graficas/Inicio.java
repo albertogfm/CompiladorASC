@@ -5,6 +5,7 @@
  */
 package graficas;
 
+import filemanagment.FileMan;
 import java.awt.FileDialog;
 
 /**
@@ -12,13 +13,13 @@ import java.awt.FileDialog;
  * @author alber
  */
 public class Inicio extends javax.swing.JFrame {
-
+    FileMan file;
     /**
      * Creates new form Inicio
      */
     public Inicio() {
         initComponents();
-        
+        file= new FileMan();
     }
 
     /**
@@ -148,11 +149,14 @@ public class Inicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
         FileDialog fc;
         fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
         fc.setDirectory("C:\\");
         fc.setVisible(true);
         String fn = fc.getFile();
+        //file.leerArchivo(fc.getDirectory());
+        System.out.println(fc.getDirectory()+fc.getFile());
         if (fn == null)
           System.out.println("You cancelled the choice");
         else

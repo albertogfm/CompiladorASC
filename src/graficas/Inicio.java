@@ -7,6 +7,7 @@ package graficas;
 
 import filemanagment.FileMan;
 import java.awt.FileDialog;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -164,8 +165,9 @@ public class Inicio extends javax.swing.JFrame {
             System.out.println("Compilado");
             this.verif=false;
         }else{
-            System.out.println("Escoga primero un archivo");
+            JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
         }
+        file.escribirArchivoLST();
     }//GEN-LAST:event_compileBActionPerformed
 
     /**

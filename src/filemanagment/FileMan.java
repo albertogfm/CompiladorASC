@@ -38,20 +38,35 @@ public class FileMan extends JFrame{
         }
         return true;
     }
-    // public void escribirArchivo(String nombre){
-    //     try {
-    //         File file = new File(".\\files\\output\\" + nombre + ".txt");
-    //         if (!file.exists()) {
-    //             file.createNewFile();
-    //         }
-    //         FileWriter fw = new FileWriter(file, true);
-    //         BufferedWriter bw = new BufferedWriter(fw);
-    //         bw.append( ",");
-    //         bw.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+   public void escribirArchivoS19(){
+        try {
+            File file = new File(".\\files\\output\\hola.S19");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("hi");
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+   public void escribirArchivoLST(){
+        try {
+            File file = new File(".\\files\\output\\hola.LST");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("hi");
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+   
     public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");
         if(!file.exists()){

@@ -1,5 +1,6 @@
 package filemanagment;
 
+import java.awt.FileDialog;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,8 +10,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import javax.swing.JFrame;
 
-public class FileMan{
+public class FileMan extends JFrame{
 
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
@@ -75,5 +77,16 @@ public class FileMan{
             System.out.println("Scanner unable to use");
         }
         return null;
+    }
+    public String fileSelector(){
+        FileDialog fc;
+        fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+        fc.setDirectory("C:\\");
+        fc.setVisible(true);
+        String fn = fc.getFile();
+        if(fn==null){
+            return null;
+        }
+        return fc.getDirectory()+fc.getFile();
     }
 }

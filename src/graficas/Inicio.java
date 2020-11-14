@@ -150,30 +150,13 @@ public class Inicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileBActionPerformed
-        
-        FileDialog fc;
-        fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
-        fc.setDirectory("C:\\");
-        fc.setVisible(true);
-        String fn = fc.getFile();
-        //file.leerArchivo(fc.getDirectory());
-        System.out.println(fc.getDirectory()+fc.getFile());
-        if(file.leerArchivo(fc.getDirectory()+fc.getFile())){
-            this.verif=true;
-        }else{
+        String dir= file.fileSelector();
+        if(dir == null){
             this.verif=false;
-        }
-        
-        
-        for(int i=0; i< file.lineasArchivoASC.size(); i++){
-            System.out.println(file.lineasArchivoASC.get(i));
-        }
-        
-        
-        if (fn == null)
-          System.out.println("You cancelled the choice");
-        else
-          System.out.println("You chose " + fn);
+        }else{
+            this.verif=true;
+        }      
+        System.out.println("You chose " + dir);
     }//GEN-LAST:event_fileBActionPerformed
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed

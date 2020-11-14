@@ -13,11 +13,10 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 
 public class FileMan extends JFrame{
-
+    //Atributos
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
-
-
+    //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);
         if(!file.exists()){

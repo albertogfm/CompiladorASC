@@ -14,7 +14,7 @@ public class FileMan{
 
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
-    public Queue <Datos> instrucciones = new LinkedList <>();
+    public Queue <Datos> instrucciones = new LinkedList<>();
 
     public boolean leerArchivo(String nombreAr) {
         File file = new File(".\\files\\read\\"+nombreAr+".ASC");

@@ -7,15 +7,14 @@ import filemanagment.*;
 public class ArchivoRegex{ //CLASE COMPILADOR
     FileMan opcode;
     int numeroceldas;
-    Queue <Datos> instrucciones = new LinkedList();
     public ArchivoRegex(){} //Constructor de la clase    
-    public String matcher(String nombre, ArrayList <String> oper, String direc){ //Método que se encarga de identificar el modo de direccionamiento a través de expresiones regulares y de validarlos
+    public String matcher(String nombre,String oper, String direc){ //Método que se encarga de identificar el modo de direccionamiento a través de expresiones regulares y de validarlos
         String mnemonico;
-        if(direc==null){
-            mnemonico = nombre+" "+oper.get(0);
+        if(direc==null ){
+            mnemonico = nombre+" "+oper;
       
             //opcode= new FileMan();
-            Pattern expresionINH = Pattern.compile("^([a-zA-Z]{3,6})$"); // Identifica el modo de direccionamiento INHERENTE
+            Pattern expresionINH = Pattern.compile("^([a-zA-Z]( ){3,6})$"); // Identifica el modo de direccionamiento INHERENTE
             Pattern expresionIMM = Pattern.compile("^([a-zA-Z]{3,6}( )(#)(\\$)?([0-9a-fA-F]{2,4}))$");// Identifica el modo de direccionamiento INMEDIATO
             Pattern expresionEXT = Pattern.compile("^([a-zA-Z]{3,6}( )(\\$)?([0-9a-fA-F]{4}))$");// Identifica el modo de direcciconamiento EXTENDIDO
             Pattern expresionDIR = Pattern.compile("^([a-zA-Z]{3,6}( )(\\$)?([0-9a-fA-F]{2}))$"); // Identifica el modo de direccionamiento  DIRECTO

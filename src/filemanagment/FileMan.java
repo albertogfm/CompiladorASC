@@ -94,6 +94,7 @@ public class FileMan extends JFrame{
         FileDialog fc;
         fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
         fc.setDirectory("C:\\");
+        fc.setFile("*.asc");
         fc.setVisible(true);
         String fn = fc.getFile();
         if(fn==null){

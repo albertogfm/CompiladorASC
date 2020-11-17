@@ -13,7 +13,7 @@ public class ArchivoRegex{ //CLASE COMPILADOR
         if(direc==null ){
             mnemonico = nombre+" "+oper;
       
-            //opcode= new FileMan();
+            
             Pattern expresionINH = Pattern.compile("^([a-zA-Z]( ){3,6})$"); // Identifica el modo de direccionamiento INHERENTE
             Pattern expresionIMM = Pattern.compile("^([a-zA-Z]{3,6}( )(#)(\\$)?([0-9a-fA-F]{2,4}))$");// Identifica el modo de direccionamiento INMEDIATO
             Pattern expresionEXT = Pattern.compile("^([a-zA-Z]{3,6}( )(\\$)?([0-9a-fA-F]{4}))$");// Identifica el modo de direcciconamiento EXTENDIDO
@@ -31,7 +31,6 @@ public class ArchivoRegex{ //CLASE COMPILADOR
             Matcher rel = expresionREL.matcher(mnemonico);//Valida la expresión RELATIVO       
             Matcher indx = expresionINDX.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "X"
             Matcher indy = expresionINDY.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "Y"
-            Matcher coment = comentarios.matcher(mnemonico);//Valida comentarios
         
         
       //En esta sección identificamos el modo de direccionamiento, y con el método readOpcodes obtenemos el opcode del mnemónico de acuerdo a su modo de direccionamiento  

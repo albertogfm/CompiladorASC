@@ -12,13 +12,13 @@ public class Datos {
     FileMan file = new FileMan(); 
     int saltos, i;
     
-    public Datos(String instruccion){
+    public Datos(String instruccion){// Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
         SetSplits(instruccion);
     }
     
     void SetSplits(String instruccion){                             
         
-        if(instruccion.length()<4){
+        if(instruccion.length()<4){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
             //Si intruccion = org
             //metododeError()
             //Si no
@@ -28,7 +28,7 @@ public class Datos {
             this.operandos.add(" ");
         }
         
-        else{
+        else{ //En otro caso, evaluaremos caso por caso para generar la instrucción correctamente.
             parts = instruccion.split(" ");
             
             if(parts[0].equals("ORG")||parts[0].equals("org")){

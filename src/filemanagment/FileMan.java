@@ -15,6 +15,8 @@ public class FileMan{
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
     public Queue <Datos> instrucciones = new LinkedList<>();
+    public ArrayList<String> constantesYvariables = new ArrayList<>();
+ 
 
     public boolean leerArchivo(String nombreAr) {
         File file = new File(".\\files\\read\\"+nombreAr+".ASC");
@@ -80,3 +82,8 @@ public class FileMan{
         System.out.println(this.instrucciones.peek().mnemonico);
     }
 }
+
+public void addVar(String variable){
+    this.constantesYvariables.add(variable);
+}
+

@@ -14,7 +14,7 @@ import java.util.*;
 public class Error extends Exception{
     private String message;
     
-    public VarNotFound (){
+   /*public VarNotFound (){
         super ("001 CONSTANTE INEXISTENTE");
     }
     public ConstNotFound (){
@@ -43,5 +43,5 @@ public class Error extends Exception{
     }
     public EndNotFound(){
         super("010 NO SE ENCUENTRA END");
-    }
+    }*/
 }

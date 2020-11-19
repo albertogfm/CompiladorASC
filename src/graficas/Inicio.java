@@ -8,6 +8,8 @@ package graficas;
 import filemanagment.FileMan;
 import java.awt.FileDialog;
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import compiladorasc.*;
 
 /**
  *
@@ -162,13 +164,18 @@ public class Inicio extends javax.swing.JFrame {
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed
         if(this.verif){
-            System.out.println("Compilado");
+            //System.out.println("Compilado");
+            ArrayList<String> arch = this.file.lineasArchivoASC;
+            CompiladorASC comp = new CompiladorASC();
+            comp.Compilador(this.file);
+            
             this.verif=false;
         }else{
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
+        
         }
-        file.escribirArchivoLST();
-        System.out.println("writing in"+file.dirSelector());
+        //file.escribirArchivoLST();
+        //System.out.println("writing in"+file.dirSelector());
     }//GEN-LAST:event_compileBActionPerformed
 
     /**

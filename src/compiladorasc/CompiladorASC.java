@@ -3,13 +3,15 @@ package compiladorasc;
 import regex.*;
 import filemanagment.*;
 import java.util.*;
-
+import java.util.regex.*;
 /**
  *
  * @author alber
  */
 public class CompiladorASC {
     static FileMan file = new FileMan();
+    public Queue <String> etiqueta = new LinkedList<>();
+    public ArrayList <String> etiquetas = new ArrayList<>();
 /*public static void main(String[] args) {
         int des;
         Scanner sc = new Scanner(System.in); 
@@ -35,10 +37,16 @@ public class CompiladorASC {
     }*/
 
     
-    static public void Compilador(FileMan file){//Recibe un FileMan
-        boolean lectura = true;
-        Validador checker = new Validador();
-        int cont=0, caso;
+    public void Compilador(FileMan file){//Recibe un FileMan
+        ArrayList <String> lineasArc = file.lineasArchivoASC;
+        boolean repetir = true;
+        int i = 0;
+        while(repetir){
+            String linea = lineasArc.get(i);
+            repetir = select(linea);
+        }
+        /*boolean lectura = true;
+        int =0, caso;
         while(lectura){
             String linea=file.lineasArchivoASC.get(i);
             
@@ -69,34 +77,46 @@ public class CompiladorASC {
                 System.out.println(convertido);
             }    
         }
-        //ingreso.ImprimirDatos();
+        //ingreso.ImprimirDatos();*/
     }
-    public void select (String instruccion){
-        
-        caso = checker.Reconoce(instruccion);
-        Switch(caso){
-            case 1:
-                break;
-            case 2:
-                String parts = linea.split("*");
-                int final = parts[0].length;
-                if(parts[0].charAt(final)==" ")
-                    
-                break;
-            case 3:
-                break;
-            case 4:
-                String parts = linea.split(" ");
-                if(parts[1].equals("EQU"))
-                    file.constantesYvariables.put(parts[0],parts[2]);
-                break;
-            case 5:
-                
-            case 6:
+    public boolean select (String linea){
+        Datos dato;
+        int caso;
+        Validador checker = new Validador();
+        Pattern comentariosUnicamente = Pattern.compile("^((\\*)[a-zA-Z0-9_\\*( )]*)$");
+        Matcher onlycomentario = comentariosUnicamente.matcher(linea);
+        Pattern comentarios = Pattern.compile("((\\*)[a-zA-Z0-9_\\*( )]*)");      //Matcher y Patern de Comentarios y espacios en blanco
+        Matcher comentario = comentarios.matcher(linea);
+        Pattern espaciosBlanco = Pattern.compile("^( )*$");
+        Matcher espacios = espaciosBlanco.matcher(linea);
 
-                
-        }
+        if(espacios.find() || onlycomentario.find()) //Ignora los espacios en blanco
+            return true;
+
+        if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
+            String[] parts = linea.split("*");
+            linea=parts[0];
+        }                     
+        caso = checker.Reconoce(linea);//Solo linea 
         
+        switch(caso){
+            case 1://Constante y variable
+                String[] parts = linea.split(" ");
+                if(parts[1].equals("EQU"))
+                file.constantesYvariables.put(parts[0],parts[2]);
+                break;
+            case 2://Intrucción 
+                dato = new Datos(linea);
+                file.instrucciones.add(dato);
+                break;
+            case 3://Etiquetas
+                etiqueta.add(linea);
+                etiquetas.add(linea);
+                break;
+            case 4://Fin 
+                return false;
+        }
+        return false;
     }
     
 }

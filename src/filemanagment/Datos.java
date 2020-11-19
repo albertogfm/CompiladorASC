@@ -98,19 +98,19 @@ public class Datos {
             }
         }
         this.direccionamiento = SetDireccionamiento();
-        try{
+        //try{
             this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
             if(this.opcode.length()==4)
                 contador+=2;
             else
                 contador+=1; 
-        }
-        catch(NullPointerException e){
+        //}
+        /*catch(NullPointerException e){
             Error err = new Error();
             err.MnemonicNotFound();
             System.out.println(err.getMessage());
 
-        }
+        }*/
    }
     String SetDireccionamiento(){
         String direccion;

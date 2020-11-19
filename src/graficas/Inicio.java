@@ -158,18 +158,24 @@ public class Inicio extends javax.swing.JFrame {
             this.verif=false;
         }else{
             this.verif=true;
+            file.leerArchivo(dir);
         }      
         System.out.println("You chose " + dir);
     }//GEN-LAST:event_fileBActionPerformed
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed
+        //System.out.println("hola");
         if(this.verif){
-            //System.out.println("Compilado");
+            System.out.println("Compilado");
             ArrayList<String> arch = this.file.lineasArchivoASC;
+            for(int i=0; i< arch.size();i++){
+                System.out.println(arch.get(i));
+            }
+
             CompiladorASC comp = new CompiladorASC();
             comp.Compilador(this.file);
             
-            this.verif=false;
+            //this.verif=false;
         }else{
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
         

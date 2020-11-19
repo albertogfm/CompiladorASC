@@ -21,10 +21,10 @@ public class CompiladorASC {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Inicio ini = new Inicio();
-        ini.setVisible(true);
+    //public static void main(String[] args) {
+    //    Inicio ini = new Inicio();
+    //    ini.setVisible(true);
         
-    }
+    //}
     
 }

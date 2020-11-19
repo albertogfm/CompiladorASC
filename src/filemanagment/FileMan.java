@@ -102,4 +102,15 @@ public class FileMan extends JFrame{
         }
         return fc.getDirectory()+fc.getFile();
     }
+    public String dirSelector(){// Opens a JFrame to select a file in our directory
+        FileDialog fc;
+        fc = new FileDialog(this, "Choose a file", FileDialog.SAVE);
+        fc.setDirectory("C:\\");
+        fc.setVisible(true);
+        String fn = fc.getFile();
+        if(fn==null){
+            return null;
+        }
+        return fc.getDirectory();
+    }
 }

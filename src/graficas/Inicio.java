@@ -168,6 +168,7 @@ public class Inicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
         }
         file.escribirArchivoLST();
+        System.out.println("writing in"+file.dirSelector());
     }//GEN-LAST:event_compileBActionPerformed
 
     /**
@@ -200,7 +201,8 @@ public class Inicio extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Inicio().setVisible(true);
+                Inicio ini = new Inicio();
+                ini.setVisible(true);
             }
         });
     }

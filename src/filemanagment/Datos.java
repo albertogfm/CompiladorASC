@@ -4,7 +4,7 @@ import java.util.*;
 import errores.*;
 
 public class Datos {
-    public String mnemonico, opcode, localidad, direccionamiento, parts[],opers[];
+    public String mnemonico, opcode, localidad, direccionamiento, parts[], opers[];
     public String etiqueta;
     public static int contador;
     public ArrayList <String> operandos = new ArrayList<String>();
@@ -12,7 +12,7 @@ public class Datos {
     FileMan file = new FileMan(); 
     int saltos, i;
     
-    public Datos(String instruccion){// Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
+    public Datos(String instruccion){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
         SetSplits(instruccion);
     }
     

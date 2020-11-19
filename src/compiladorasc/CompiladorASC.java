@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class CompiladorASC {
     static FileMan file = new FileMan();
-    public static void main(String[] args) {
+/*public static void main(String[] args) {
         int des;
         Scanner sc = new Scanner(System.in); 
         boolean rep = true;
@@ -37,9 +37,20 @@ public class CompiladorASC {
             if(des==2)
                 rep=false;
         }
-    }
+    }*/
+
     
-    static public void Compilador(){//Recibe un FileMan
+    static public void Compilador(FileMan file){//Recibe un FileMan
+        boolean lectura = true;
+        Validador checker = new Validador();
+        int cont=0, caso;
+        while(lectura){
+            String linea=file.lineasArchivoASC.get(i);
+            
+        }
+        
+        
+        
         Datos ingreso = file.instrucciones.poll();
         String nuevo, convertido;
         int limite=ingreso.operandos.size()-1,convertidor,large;
@@ -64,6 +75,33 @@ public class CompiladorASC {
             }    
         }
         //ingreso.ImprimirDatos();
+    }
+    public void select (String instruccion){
+        
+        caso = checker.Reconoce(instruccion);
+        Switch(caso){
+            case 1:
+                break;
+            case 2:
+                String parts = linea.split("*");
+                int final = parts[0].length;
+                if(parts[0].charAt(final)==" ")
+                    
+                break;
+            case 3:
+                break;
+            case 4:
+                String parts = linea.split(" ");
+                if(parts[1].equals("EQU"))
+                    file.constantesYvariables.put(parts[0],parts[2]);
+                break;
+            case 5:
+                
+            case 6:
+
+                
+        }
+        
     }
     
 }

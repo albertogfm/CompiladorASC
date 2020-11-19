@@ -13,9 +13,8 @@ import java.util.regex.*;
 public class Validador {
     Error error;
     public int Reconoce(String instruccion){
-        Pattern caso;
         Pattern espaciosBlanco = Pattern.compile("^( )*$");
-        Pattern comentarios = Pattern.compile("((\\*)[a-zA-Z0-9_\\*( )]*)");
+        //Pattern comentarios = Pattern.compile("((\\*)[a-zA-Z0-9_\\*( )]*)");
         Pattern comentariosUnicamente = Pattern.compile("^((\\*)[a-zA-Z0-9_\\*( )]*)$");
         Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(\\$)[0-9]{4})$");
         Pattern instruccion = Pattern.compile("^(( )+[a-zA-Z0-9\\$'( ),]*)$");

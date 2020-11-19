@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class FileMan{
 
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
     public Queue <Datos> instrucciones = new LinkedList<>();
-    public ArrayList<String> constantesYvariables = new ArrayList<>();
- 
+    public HashMap<String,String> constantesYvariables = new HashMap<>();
+    
 
     public boolean leerArchivo(String nombreAr) {
         File file = new File(".\\files\\read\\"+nombreAr+".ASC");

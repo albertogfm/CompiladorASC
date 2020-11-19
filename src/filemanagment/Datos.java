@@ -1,7 +1,7 @@
 package filemanagment;
 import regex.*;
 import java.util.*;
-
+import errores.*;
 
 public class Datos {
     public String mnemonico, opcode, localidad, direccionamiento, parts[],opers[];
@@ -25,6 +25,7 @@ public class Datos {
             this.mnemonico=instruccion.toLowerCase();
             this.direccionamiento= "inh";
             this.localidad = SetLocalidad(contador);
+            //exception no operandos
             this.operandos.add(" ");
         }
         
@@ -97,11 +98,19 @@ public class Datos {
             }
         }
         this.direccionamiento = SetDireccionamiento();
-        this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-        if(this.opcode.length()==4)
-            contador+=2;
-        else
-            contador+=1;  
+        try{
+            this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+            if(this.opcode.length()==4)
+                contador+=2;
+            else
+                contador+=1; 
+        }
+        catch(NullPointerException e){
+            Error err = new Error();
+            err.MnemonicNotFound();
+            System.out.println(err.getMessage());
+
+        }
    }
     String SetDireccionamiento(){
         String direccion;

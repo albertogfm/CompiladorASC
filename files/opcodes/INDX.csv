@@ -53,9 +53,9 @@ cmpb,E1
 com,63
 coma,-- 
 comb,-- 
-cpd,1A A3
+cpd,1AA3
 cpx,AC
-cpy,1A AC
+cpy,1AAC
 daa,-- 
 dec,6A
 deca,-- 
@@ -80,7 +80,7 @@ ldab,E6
 ldd,EC
 lds,AE
 ldx,EE
-ldy,1A EE
+ldy,1AEE
 lsl,68
 lsla,-- 
 lslb,-- 
@@ -124,7 +124,7 @@ std,ED
 stop,-- 
 sts,AF
 stx,EF
-sty,1A EF
+sty,1AEF
 suba,A0
 subb,E0
 subd,A3

@@ -14,9 +14,9 @@ public class Validador {
     Error error;
     public int Reconoce(String instruccion){
         Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(\\$)[0-9]{4})$");
-        Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9\\$'( ),]*)$");
+        Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
         Pattern etiquetas = Pattern.compile("[A-Za-z0-9]*");
-        Pattern fin = Pattern.compile("^(( )+(END)( )+(\\$)[0-9]{4})$");
+        Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{4})?)");
 
         Matcher consyvar = constantesyVariables.matcher(instruccion);
         Matcher instruc = instruccionASC.matcher(instruccion);
@@ -26,14 +26,16 @@ public class Validador {
         if(consyvar.find())
             return 1;
 
-        if(instruc.find())
-            return 2;
+        if(finPograma.find())
+            return 4;
+        
+        if(instruc.find()){
+            return 2;}
         
         if(etiq.find())
             return 3;
 
-        if(finPograma.find())
-            return 4;
+        
         return 5;
     }
     

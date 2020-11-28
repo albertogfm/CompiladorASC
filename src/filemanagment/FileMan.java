@@ -17,8 +17,8 @@ public class FileMan extends JFrame{
     //Atributos
     public ArrayList<String> lineasArchivoASC = new ArrayList<>();
     public ArrayList<String> opCodesFile = new ArrayList<>();
-    public Queue <Datos> instrucciones = new LinkedList<>();
-    public HashMap<String,String> constantesYvariables = new HashMap<>();
+    public static Queue <Datos> instrucciones = new LinkedList<>();
+    public static HashMap<String,String> constantesYvariables = new HashMap<>();
     //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);

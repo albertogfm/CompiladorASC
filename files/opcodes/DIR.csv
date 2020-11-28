@@ -53,9 +53,9 @@ cmpb,D1
 com,-- 
 coma,-- 
 comb,-- 
-cpd,1A 93
+cpd,1A93
 cpx,9C
-cpy,18 9C
+cpy,189C
 daa,-- 
 dec,-- 
 deca,-- 
@@ -80,7 +80,7 @@ ldab,D6
 ldd,DC
 lds,9E
 ldx,DE
-ldy,18 DE
+ldy,18DE
 lsl,-- 
 lsla,-- 
 lslb,-- 
@@ -124,7 +124,7 @@ std,DD
 stop,-- 
 sts,9F
 stx,DF
-sty,18 DF
+sty,18DF
 suba,90
 subb,D0
 subd,93

@@ -168,14 +168,12 @@ public class Inicio extends javax.swing.JFrame {
         if(this.verif){
             System.out.println("Compilado");
             ArrayList<String> arch = this.file.lineasArchivoASC;
-            for(int i=0; i< arch.size();i++){
-                System.out.println(arch.get(i));
-            }
+            
 
             CompiladorASC comp = new CompiladorASC();
             comp.Compilador(this.file);
             
-            //this.verif=false;
+            this.verif=false;
         }else{
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
         

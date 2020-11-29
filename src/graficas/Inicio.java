@@ -7,6 +7,7 @@ package graficas;
 
 import filemanagment.FileMan;
 import java.awt.FileDialog;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,6 +22,7 @@ public class Inicio extends javax.swing.JFrame {
      */
     public Inicio() {
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("/graficas/Motorola-Logo.png")).getImage());
         file= new FileMan();
     }
 
@@ -165,11 +167,21 @@ public class Inicio extends javax.swing.JFrame {
         
         if(this.verif){
             System.out.println("Compilado");
+            boolean comp = false;
+            if(comp == true){
+                file.escribirArchivoLST();
+                file.escribirArchivoS19();
+            
+            }else{
+                JOptionPane.showMessageDialog(this,"El código fuente contiene errores, cheacr el archivo con los errores","    ERROR AL COMPILAR",2);
+                file.escribirErrores();
+            }
+
             this.verif=false;
         }else{
-            JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
+            JOptionPane.showMessageDialog(this,"Escoge un archivo primero","    NO HAY ARCHIVO CARGADO",2);
         }
-        file.escribirArchivoLST();
+       
 
     }//GEN-LAST:event_compileBActionPerformed
 

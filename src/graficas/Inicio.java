@@ -156,11 +156,13 @@ public class Inicio extends javax.swing.JFrame {
             this.verif=false;
         }else{
             this.verif=true;
+            file.leerArchivo(dir);
         }      
         System.out.println("You chose " + dir);
     }//GEN-LAST:event_fileBActionPerformed
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed
+        
         if(this.verif){
             System.out.println("Compilado");
             this.verif=false;
@@ -168,7 +170,7 @@ public class Inicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
         }
         file.escribirArchivoLST();
-        System.out.println("writing in"+file.dirSelector());
+
     }//GEN-LAST:event_compileBActionPerformed
 
     /**

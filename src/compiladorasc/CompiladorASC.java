@@ -11,10 +11,12 @@ import java.util.regex.*;
 public class CompiladorASC {
     static FileMan fileASC = new FileMan();
     public Queue <String> etiqueta = new LinkedList<>();
-    public static ArrayList <String> etiquetas = new ArrayList<>();
+    public static ArrayList <String> etiquetas = new ArrayList<>();//Etiquetas declaradas
     public static ArrayList <String> compilacion = new ArrayList<>();
     public static ArrayList <Datos> datos2 = new ArrayList<>();
     public ArrayList <String> relativos = new ArrayList<>();
+    public static Queue <Datos> saltos = new LinkedList<>();
+     
     
     public void Compilador(FileMan file){//Recibe un FileMan
         ArrayList <String> lineasArc = file.lineasArchivoASC;
@@ -24,13 +26,15 @@ public class CompiladorASC {
         while(repetir){
             String linea = lineasArc.get(i);
             i+=1;
-            repetir = select(linea);
+            repetir = select(linea,i);
         }
         firstCheck(fileASC.instrucciones);
+        //imprimirArray();
+        SecondCheck();
         imprimirArray();
     }
     
-    public boolean select (String linea){
+    public boolean select (String linea, int numLinea){
         Datos dato;
         int caso;
         Validador checker = new Validador();
@@ -62,12 +66,12 @@ public class CompiladorASC {
                 while(linea.endsWith(" ")){
                     linea=linea.substring(0,linea.length()-1);
                 }
-                dato = new Datos(linea,etiqueta,etiquetas);
-                if(dato.mnemonico!=null){
-                    dato.ImprimirDatos();
-                    fileASC.instrucciones.add(dato);
-                    datos2.add(dato);
-                }
+                dato = new Datos(linea,etiqueta,etiquetas,numLinea);
+                    if(dato.mnemonico!=null){
+                        dato.ImprimirDatos();
+                        fileASC.instrucciones.add(dato);
+                        datos2.add(dato);
+                    }
                 break;
             case 3://Etiquetas
                 etiqueta.add(linea);
@@ -104,6 +108,7 @@ public class CompiladorASC {
                 if(checker.find()){
                     if(mnemonicosREL2(element.mnemonico)){
                         compilacion.add("--");
+                        saltos.add(element);
                         break;
                     }
                     if(etiquetas.contains(element.operandos.get(i))){
@@ -182,23 +187,7 @@ public class CompiladorASC {
             }    
         }
     }
-    public void secondCheck(){
-        int i,j;
-        String searchTAG=null, foundLoc; 
-        for(i=0;i<datos2.size();i++){
-            Datos datoREL = datos2.get(i);
-            if(mnemonicosREL2(datoREL.mnemonico))
-                searchTAG = datoREL.operandos.get(0);
-            if(datoREL.mnemonico.equals("bclr") || datoREL.mnemonico.equals("bset"))
-                searchTAG = datoREL.operandos.get(2);
-            if(searchTAG != null){
-                for(j=0;i<datos2.size();i++){
-                    if(searchTAG.equals(datos2.get(j).etiqueta))
-                        foundLoc = datos2.get(j).localidad;
-                }              
-            }
-        }
-    }
+
 
     public boolean mnemonicosREL2(String instruccion){
         this.relativos.add("bcc");
@@ -230,13 +219,110 @@ public class CompiladorASC {
         for(int i=0;i<compilacion.size();i++)
             System.out.println(compilacion.get(i));
     }
-    /*public void Salto(String init, String End){
-        int inicio = Integer.parseInt(init,16);
-        int fin = Integer.parseInt(fin,16);
-        if( inicio < fin)
-            
-    }*/
+
+
+    public void SecondCheck(){//Segunda pasada  
+        int i, dif1,dif2,newBin,decimal=0,n=0,j,x, index=0,nuevaLoc; 
+        String localidad=" ",hex;
+        boolean rep = true;
+        int complementoa2;
+        while(rep){
+            if(saltos.peek()==null){
+                break;
+            }
+            Datos element = saltos.poll(); //Desencolamos
+            for(i=0; i<element.operandos.size(); i++){
+                String etiqueta = element.operandos.get(i);
+                if(etiquetas.contains(etiqueta)){ //Identifica si la etiqueta existe en nuestra lista
+                    for(j=0;j<datos2.size();j++){
+                        if(datos2.get(j).etiqueta!=null)
+                            if(datos2.get(j).etiqueta.equals(etiqueta)){
+                                localidad=datos2.get(j).localidad;
+                            }   
+                    }
+                } 
+            }
+            if(Integer.parseInt(element.localidad,16)>Integer.parseInt(localidad,16)){//Salto negativo
+                dif1=Integer.parseInt(element.localidad,16);//Lo que estamos analizando
+                if(element.operandos.size()==1)
+                    dif1+=1;
+                else
+                    dif1+=3;
+                dif2=Integer.parseInt(localidad,16);//Localidad donde se encuentra la etiqueta
+                int diferenciaNegativa=(dif2-dif1)-1;//Diferencia de localidades
+                diferenciaNegativa=-1*diferenciaNegativa;
+                String binario = Long.toBinaryString(diferenciaNegativa);
+                while(binario.length()<8){
+                    binario = '0'+binario;   
+                }
+                newBin = Integer.parseInt(twosCompliment(binario));
+                decimal=binarioDec(newBin);
+                hex=Integer.toHexString(decimal);                
+                for(x=0;x<compilacion.size();x++){
+                    if(compilacion.get(x).equals("--")){
+                        compilacion.set(x,hex.toUpperCase());
+                        break;
+                    }
+                } 
+            }          
+            else{//Salto positivo
+                dif1=Integer.parseInt(element.localidad,16);
+                dif2=Integer.parseInt(localidad,16);
+
+                if(element.operandos.size()==1)
+                    if(element.opcode.length()==2)
+                        dif1+=1;
+                    else
+                        dif1+=2;
+                else
+                    if(element.opcode.length()==2)
+                        dif1+=3;
+                    else
+                        dif1+=4;
+                int diferenciaPositiva=(dif2-dif1)-1;
+                String result2=Integer.toHexString(diferenciaPositiva);
+                nuevaLoc = dif1+diferenciaPositiva;
+                result2=Integer.toHexString(diferenciaPositiva);
+                if(result2.length()==1)
+                    result2='0'+result2;
+                for(x=0;x<compilacion.size();x++){
+                    if(compilacion.get(x).equals("--")){
+                        compilacion.set(x,result2.toUpperCase());
+                        break;
+                    }
+            }
+        
+        }
+        }
+    }
+    public String twosCompliment(String bin) {
+        int suma1, suma2=1,total;
+        StringBuilder bina = new StringBuilder(bin);
+        for(int i=0;i<bin.length();i++){
+            if(bin.charAt(i)=='1')
+                bina.setCharAt(i,'0');
+            else
+                bina.setCharAt(i,'1');
+        }
+        bin = bina.toString();
+        suma1=Integer.parseInt(bin,2);
+        total=suma1+suma2;
+        return Long.toBinaryString(total);
+    }
+    public int binarioDec(int binario){
+       int resto, decimal=0, i=0;
+       while (binario != 0){
+           resto = binario % 10;
+           decimal = decimal + (resto * (int) Math.pow(2, i));
+           i++;
+           binario = binario / 10;
+       }
+       return decimal;
+    }
 }
+    
+    
+
 
       
     

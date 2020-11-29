@@ -12,13 +12,16 @@ public class Datos {
     public ArrayList <String> operandos = new ArrayList<String>();
     public ArrayList <String> relativos= new ArrayList<String>();
     FileMan file = new FileMan(); 
-    int saltos, i;
+    int saltos, i,numLinea;
     public CompiladorASC com = new CompiladorASC();
     
     public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
         SetSplits(instruccion,etiqueta,etiquetas);
     }
-    
+    public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas, int numlinea){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
+        this.numLinea=numlinea;
+        SetSplits(instruccion,etiqueta,etiquetas);
+    }
     void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){
         Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");               
         Matcher checker;
@@ -39,6 +42,10 @@ public class Datos {
                 this.direccionamiento="rel";
                 this.localidad=SetLocalidad(contador);
                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                if(this.opcode == null){                 
+                    file.errores.add(new ErrorASC(this.numLinea,4));
+                    return;
+                }
                 this.contador+=1;
                 if(this.opcode.length()==4)
                     this.contador+=2;
@@ -106,6 +113,10 @@ public class Datos {
                             this.operandos.add(valor);
                             this.direccionamiento = SetDireccionamiento(valor);
                             this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                            if(this.opcode == null){
+                                file.errores.add(new ErrorASC(this.numLinea,4));
+                                return;
+                            }
                             if(this.opcode.length()==4)
                                 this.contador+=2;
                             else
@@ -113,7 +124,6 @@ public class Datos {
                             return;
                         }    
                         if(etiquetas.contains(parts[1])){
-                            System.out.println("Aqui si");
                             if(mnemonicosREL(parts[0])){}
                             else{
                                 this.localidad = SetLocalidad(contador);   
@@ -122,6 +132,10 @@ public class Datos {
                                 this.direccionamiento= "ext";
                                 this.mnemonico=parts[0].toLowerCase();
                                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                                if(this.opcode == null){
+                                    file.errores.add(new ErrorASC(this.numLinea,4));
+                                    return;
+                                }
                                 if(this.opcode.length()==4)
                                     this.contador+=2;
                                 else
@@ -169,6 +183,10 @@ public class Datos {
        
         this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
         this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+        if(this.opcode == null){
+            file.errores.add(new ErrorASC(this.numLinea,4));
+            return;
+        }
         if(this.opcode.length()==4)
             this.contador+=2;
         else

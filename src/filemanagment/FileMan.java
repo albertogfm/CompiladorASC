@@ -12,6 +12,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import java.util.HashMap;
+import errores.*;
 
 public class FileMan extends JFrame{
     //Atributos
@@ -19,6 +20,7 @@ public class FileMan extends JFrame{
     public ArrayList<String> opCodesFile = new ArrayList<>();
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
+    public static Queue <ErrorASC> errores = new LinkedList<>();
     //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);
@@ -90,7 +92,7 @@ public class FileMan extends JFrame{
 
         }catch (FileNotFoundException e) {
             System.out.println("Scanner unable to use");
-        }
+        }       
         return null;
     }
     public String fileSelector(){// Opens a JFrame to select a file in our directory

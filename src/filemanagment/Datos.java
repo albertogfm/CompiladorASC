@@ -15,183 +15,181 @@ public class Datos {
     int saltos, i,numLinea;
     public CompiladorASC com = new CompiladorASC();
     
-    public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
-        SetSplits(instruccion,etiqueta,etiquetas);
-    }
+    //public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
+        //SetSplits(instruccion,etiqueta,etiquetas);
+    //}
     public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas, int numlinea){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
         this.numLinea=numlinea;
-        SetSplits(instruccion,etiqueta,etiquetas);
+        SetSplits(instruccion,etiqueta,etiquetas,numlinea);
     }
-    void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){
+    void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){
         Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");               
         Matcher checker;
         if(instruccion.length()<5){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
             if(etiqueta.peek()!=null)
                 this.etiqueta=etiqueta.poll();
-            this.mnemonico=instruccion.toLowerCase();
-            this.direccionamiento= "inh";
-            this.localidad = SetLocalidad(contador);
-            this.operandos.add(" ");
-        }
-        
-        else{ //En otro caso, evaluaremos caso por caso para generar la instrucción correctamente.
-            parts = instruccion.split(" ");
-            if(mnemonicosREL(parts[0])){
-                this.mnemonico=parts[0].toLowerCase();
-                this.operandos.add(parts[1]);
-                this.direccionamiento="rel";
-                this.localidad=SetLocalidad(contador);
+            if(file.readNemon(instruccion.toLowerCase())){
+                this.mnemonico=instruccion.toLowerCase();
+                this.direccionamiento= "inh";
+                this.localidad = SetLocalidad(contador);
+                this.operandos.add(" ");
                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-                if(this.opcode == null){                 
-                    file.errores.add(new ErrorASC(this.numLinea,4));
-                    return;
-                }
-                this.contador+=1;
                 if(this.opcode.length()==4)
                     this.contador+=2;
                 else
                     this.contador+=1;
-                return;
             }
-            if(parts[0].equals("ORG")||parts[0].equals("org")){
-                String nuevaLocalidad = parts[1].substring(1);
-                contador=hexadecimalADecimal(nuevaLocalidad);
-                return;
+            else{
+                file.errores.add(new ErrorASC(4,linea));
             }
-            
-            if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){
-                if(etiqueta.peek()!=null)
-                    this.etiqueta=etiqueta.poll();
-                this.mnemonico=parts[0].toLowerCase();
-                this.localidad=SetLocalidad(contador);
-                opers = parts[1].split(",");
-                
-                if(opers.length==2){ 
-                    this.operandos.add(opers[0]);
-                    this.operandos.add(opers[1]);
-                    this.contador+=2;
-                }
-                
-                else{
-                    this.operandos.add(opers[0]);
-                    this.operandos.add(opers[2]);
-                    this.contador+=2;
-                    if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X' )
-                        this.direccionamiento="indx";
+        }
+        
+        else{ //En otro caso, evaluaremos caso por caso para generar la instrucción correctamente.
+            parts = instruccion.split(" ");
+            if(!file.readNemon(parts[0].toLowerCase()))
+                file.errores.add(new ErrorASC(4,linea));
+            else{
+                if(mnemonicosREL(parts[0])){
+                    this.mnemonico=parts[0].toLowerCase();
+                    this.operandos.add(parts[1]);
+                    this.direccionamiento="rel";
+                    this.localidad=SetLocalidad(contador);
+                    this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                    this.contador+=1;
+                    if(this.opcode.length()==4)
+                        this.contador+=2;
                     else
-                        this.direccionamiento="indy";
-                }   
-            }
-             
-            else{   
-                if(parts.length==2){
+                        this.contador+=1;
+                    return;
+                }
+                if(parts[0].equals("ORG")||parts[0].equals("org")){
+                    String nuevaLocalidad = parts[1].substring(1);
+                    contador=hexadecimalADecimal(nuevaLocalidad);
+                    return;
+                }
+
+                if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){
                     if(etiqueta.peek()!=null)
                         this.etiqueta=etiqueta.poll();
-                    if(mnemonicosREL(parts[0].toLowerCase())){
-                        this.operandos.add(parts[1]);
-                        this.localidad = SetLocalidad(contador);   
-                        this.contador+=1;
+                    this.mnemonico=parts[0].toLowerCase();
+                    this.localidad=SetLocalidad(contador);
+                    opers = parts[1].split(",");
+
+                    if(opers.length==2){ 
+                        this.operandos.add(opers[0]);
+                        this.operandos.add(opers[1]);
+                        this.contador+=2;
                     }
-                    checker = TagorCons.matcher(parts[1]);
-                    if(parts[1].charAt(0)=='#')
-                        if(parts[1].charAt(1)=='$')
-                            checker = TagorCons.matcher(parts[1].substring(0));
+
+                    else{
+                        this.operandos.add(opers[0]);
+                        this.operandos.add(opers[2]);
+                        this.contador+=2;
+                        if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X' )
+                            this.direccionamiento="indx";
                         else
-                            checker = TagorCons.matcher(parts[1].substring(1));
-                    if(checker.find()){
-                        if(file.constantesYvariables.containsKey(parts[1].substring(1))){
-                            this.localidad = SetLocalidad(contador);
-                            this.mnemonico=parts[0].toLowerCase();
-                            if(parts[1].charAt(0)=='#')
-                                valor = file.constantesYvariables.get(parts[1].substring(1));
+                            this.direccionamiento="indy";
+                    }   
+                }
+
+                else{   
+                    if(parts.length==2){
+                        if(etiqueta.peek()!=null)
+                            this.etiqueta=etiqueta.poll();
+                        if(mnemonicosREL(parts[0].toLowerCase())){
+                            this.operandos.add(parts[1]);
+                            this.localidad = SetLocalidad(contador);   
+                            this.contador+=1;
+                        }
+                        checker = TagorCons.matcher(parts[1]);
+                        if(parts[1].charAt(0)=='#')
+                            if(parts[1].charAt(1)=='$')
+                                checker = TagorCons.matcher(parts[1].substring(0));
                             else
-                                valor = file.constantesYvariables.get(parts[1]);
-                            if(valor.substring(1).length() == 2)
-                                this.contador += 1;
-                            else
-                                this.contador += 2;
-                            this.operandos.add(valor);
-                            this.direccionamiento = SetDireccionamiento(valor);
-                            this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-                            if(this.opcode == null){
-                                file.errores.add(new ErrorASC(this.numLinea,4));
-                                return;
-                            }
-                            if(this.opcode.length()==4)
-                                this.contador+=2;
-                            else
-                                this.contador+=1;  
-                            return;
-                        }    
-                        if(etiquetas.contains(parts[1])){
-                            if(mnemonicosREL(parts[0])){}
-                            else{
-                                this.localidad = SetLocalidad(contador);   
-                                this.operandos.add(parts[1]);
-                                this.contador+=2;
-                                this.direccionamiento= "ext";
+                                checker = TagorCons.matcher(parts[1].substring(1));
+                        if(checker.find()){
+                            if(file.constantesYvariables.containsKey(parts[1].substring(1))){
+                                this.localidad = SetLocalidad(contador);
                                 this.mnemonico=parts[0].toLowerCase();
+                                if(parts[1].charAt(0)=='#')
+                                    valor = file.constantesYvariables.get(parts[1].substring(1));
+                                else
+                                    valor = file.constantesYvariables.get(parts[1]);
+                                if(valor.substring(1).length() == 2)
+                                    this.contador += 1;
+                                else
+                                    this.contador += 2;
+                                this.operandos.add(valor);
+                                this.direccionamiento = SetDireccionamiento(valor);
                                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-                                if(this.opcode == null){
-                                    file.errores.add(new ErrorASC(this.numLinea,4));
-                                    return;
-                                }
                                 if(this.opcode.length()==4)
                                     this.contador+=2;
                                 else
-                                    this.contador+=1;
+                                    this.contador+=1;  
                                 return;
+                            }    
+                            if(etiquetas.contains(parts[1])){
+                                if(mnemonicosREL(parts[0])){}
+                                else{
+                                    this.localidad = SetLocalidad(contador);   
+                                    this.operandos.add(parts[1]);
+                                    this.contador+=2;
+                                    this.direccionamiento= "ext";
+                                    this.mnemonico=parts[0].toLowerCase();
+                                    this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                                    if(this.opcode.length()==4)
+                                        this.contador+=2;
+                                    else
+                                        this.contador+=1;
+                                    return;
+                                }
+
                             }
-                            
+                        }                    
+                        else{
+                            this.localidad = SetLocalidad(contador);   
+                            if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
+                                this.contador+=1;
+                            else
+                                this.contador+=2;
+                            this.operandos.add(parts[1]);   
                         }
-                    }                    
-                    else{
-                        this.localidad = SetLocalidad(contador);   
-                        if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
-                            this.contador+=1;
-                        else
-                            this.contador+=2;
-                        this.operandos.add(parts[1]);   
+                    }    
+                        this.mnemonico=parts[0].toLowerCase();      
+                }
+                if(parts.length==3){
+                    if(etiqueta.peek()!=null)
+                        this.etiqueta=etiqueta.poll();
+                    this.mnemonico=parts[0].toLowerCase();
+                    this.localidad = SetLocalidad(contador);
+                    opers=parts[1].split(",");
+                    if(opers.length==2){
+                        this.operandos.add(opers[0]);
+                        this.operandos.add(opers[1]);
+                        this.operandos.add(parts[2]);
+                        this.contador+=3;
                     }
-                }    
-                this.mnemonico=parts[0].toLowerCase();      
-            }
-            if(parts.length==3){
-                if(etiqueta.peek()!=null)
-                    this.etiqueta=etiqueta.poll();
-                this.mnemonico=parts[0].toLowerCase();
-                this.localidad = SetLocalidad(contador);
-                opers=parts[1].split(",");
-                if(opers.length==2){
-                    this.operandos.add(opers[0]);
-                    this.operandos.add(opers[1]);
-                    this.operandos.add(parts[2]);
-                    this.contador+=3;
-                }
-                else{
-                    this.operandos.add(opers[0]);
-                    this.operandos.add(opers[2]);
-                    this.operandos.add(parts[2]);
-                    this.contador+=3;
-                    if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X')
-                        this.direccionamiento="indx";
-                    else
-                        this.direccionamiento="indy";
-                    } 
-                }
+                    else{
+                        this.operandos.add(opers[0]);
+                        this.operandos.add(opers[2]);
+                        this.operandos.add(parts[2]);
+                        this.contador+=3;
+                        if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X')
+                            this.direccionamiento="indx";
+                        else
+                            this.direccionamiento="indy";
+                        } 
+                    }
+            
+
+            this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
+            this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+            if(this.opcode.length()==4)
+                this.contador+=2;
+            else
+                this.contador+=1;
         }
-       
-        this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
-        this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-        if(this.opcode == null){
-            file.errores.add(new ErrorASC(this.numLinea,4));
-            return;
         }
-        if(this.opcode.length()==4)
-            this.contador+=2;
-        else
-            this.contador+=1;
-         
    }
     
     String SetDireccionamiento(String operandos){

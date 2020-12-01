@@ -95,6 +95,28 @@ public class FileMan extends JFrame{
         }       
         return null;
     }
+    public boolean readNemon(String nemon) {
+        File file = new File(".\\files\\opcodes\\NEMON.csv");
+        if(!file.exists()){
+                System.out.println("\tNo se encontró el archivo.....");
+                return false;
+        }
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                String linea = sc.nextLine();//Lee el contenido del archiv
+                if(nemon.equals(linea.toLowerCase())){
+                    sc.close();
+                    return true;
+                }
+            }
+            sc.close();
+
+        }catch (FileNotFoundException e) {
+            System.out.println("Scanner unable to use");
+        }       
+        return false;
+    }
     public String fileSelector(){// Opens a JFrame to select a file in our directory
         FileDialog fc;
         fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);

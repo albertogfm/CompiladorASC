@@ -28,10 +28,15 @@ public class CompiladorASC {
             i+=1;
             repetir = select(linea,i);
         }
-        firstCheck(fileASC.instrucciones);
-        //imprimirArray();
-        SecondCheck();
-        imprimirArray();
+        if(file.errores.isEmpty()){
+            firstCheck(fileASC.instrucciones);
+            //imprimirArray();
+            SecondCheck();
+            imprimirArray();
+        }
+        else{
+            System.out.println("Se detectaron "+file.errores.size()+" errores :C");
+        }
     }
     
     public boolean select (String linea, int numLinea){
@@ -67,7 +72,7 @@ public class CompiladorASC {
                     linea=linea.substring(0,linea.length()-1);
                 }
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
-                    if(dato.mnemonico!=null){
+                    if(dato.opcode!=null){
                         dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
@@ -93,7 +98,8 @@ public class CompiladorASC {
             if(datos.peek()==null)
                 rep=false;
             String buscador;
-            Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");    
+            Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");
+            System.out.println(element.mnemonico);
             if(element.opcode.length() == 2) //Opcode
                 compilacion.add(element.opcode);
             if(element.opcode.length() == 4){

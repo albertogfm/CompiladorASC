@@ -21,15 +21,17 @@ public class CompiladorASC {
     
     public void Compilador(FileMan file){//Recibe un FileMan
         ArrayList <String> lineasArc = file.lineasArchivoASC;
-        boolean repetir = true, repetir2=true;
+        boolean endNotExist = true, repetir2=true;
         int i;
         checkIfMarginCorrect(file);
         for(i=0;i<lineasArc.size();i++){
             String linea = lineasArc.get(i);
-            repetir = select(linea,i);
-            if(repetir=false)
+            endNotExist = select(linea,i);
+            if(endNotExist==false)
                 break;
         }
+        if(endNotExist)
+            file.errores.add(new ErrorASC(10,lineasArc.size()));
         if(file.errores.isEmpty()){
             firstCheck(fileASC.instrucciones);
             //imprimirArray();
@@ -63,7 +65,7 @@ public class CompiladorASC {
             String[] parts = linea.split("*");
             linea=parts[0];
         }
-        caso = checker.Reconoce(linea);//Solo linea 
+        caso = checker.Reconoce(linea,numLinea);//Solo linea 
         switch(caso){
             case 1://Constante y variable
                 String[] parts = linea.split(" ");
@@ -79,7 +81,7 @@ public class CompiladorASC {
                 }
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        dato.ImprimirDatos();
+                        //dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -105,7 +107,6 @@ public class CompiladorASC {
                 rep=false;
             String buscador;
             Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");
-            System.out.println(element.mnemonico);
             if(element.opcode.length() == 2) //Opcode
                 compilacion.add(element.opcode);
             if(element.opcode.length() == 4){

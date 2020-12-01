@@ -29,7 +29,7 @@ bitb
 ble
 blo
 bls
-blt,--
+blt
 bmi
 bne
 bpl
@@ -94,6 +94,7 @@ neg
 nega
 negb
 nop
+org
 oraa
 orab
 psha

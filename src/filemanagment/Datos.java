@@ -62,7 +62,7 @@ public class Datos {
                         this.contador+=1;
                     return;
                 }
-                if(parts[0].equals("ORG")||parts[0].equals("org")){
+                if(parts[0].equals("ORG")|| parts[0].equals("org")){
                     String nuevaLocalidad = parts[1].substring(1);
                     contador=hexadecimalADecimal(nuevaLocalidad);
                     return;

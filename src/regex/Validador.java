@@ -5,14 +5,16 @@
  */
 package regex;
 import java.util.regex.*;
-
+import filemanagment.*;
+import errores.*;
 /**
  *
  * @author 1ZW05LA_RS3
  */
 public class Validador {
     Error error;
-    public int Reconoce(String instruccion){
+    public int Reconoce(String instruccion,int linea){
+        FileMan file = new FileMan();
         Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(\\$)[0-9]{4})$");
         Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
         Pattern etiquetas = Pattern.compile("[A-Za-z0-9]*");
@@ -33,9 +35,13 @@ public class Validador {
             return 2;
         }
         
-        if(etiq.find())
+        if(etiq.find()){
+            if(file.readNemon(instruccion.toLowerCase())){
+                System.out.println("Entre "+instruccion);
+                file.errores.add(new ErrorASC(9,linea));
+            }
             return 3;
-
+            }
         
         return 5;
     }

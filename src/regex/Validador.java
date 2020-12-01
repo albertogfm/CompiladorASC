@@ -30,7 +30,8 @@ public class Validador {
             return 4;
         
         if(instruc.find()){
-            return 2;}
+            return 2;
+        }
         
         if(etiq.find())
             return 3;

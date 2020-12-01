@@ -4,6 +4,7 @@ import regex.*;
 import filemanagment.*;
 import java.util.*;
 import java.util.regex.*;
+import errores.*;
 /**
  *
  * @author alber
@@ -21,12 +22,13 @@ public class CompiladorASC {
     public void Compilador(FileMan file){//Recibe un FileMan
         ArrayList <String> lineasArc = file.lineasArchivoASC;
         boolean repetir = true, repetir2=true;
-        int i=0;
-        
-        while(repetir){
+        int i;
+        checkIfMarginCorrect(file);
+        for(i=0;i<lineasArc.size();i++){
             String linea = lineasArc.get(i);
-            i+=1;
             repetir = select(linea,i);
+            if(repetir=false)
+                break;
         }
         if(file.errores.isEmpty()){
             firstCheck(fileASC.instrucciones);
@@ -36,6 +38,10 @@ public class CompiladorASC {
         }
         else{
             System.out.println("Se detectaron "+file.errores.size()+" errores :C");
+            for(int j=0 ; j< file.errores.size(); j++){
+                System.out.println(file.errores.get(j).toString());
+            }
+            
         }
     }
     
@@ -324,6 +330,34 @@ public class CompiladorASC {
            binario = binario / 10;
        }
        return decimal;
+    }
+
+    public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
+        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
+        //Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{4})?)");   
+        //boolean endExiste= false;
+        for(int i = 0 ; i< file.lineasArchivoASC.size();i++){
+            String linea=file.lineasArchivoASC.get(i);
+            Matcher checker= Textoespaciado.matcher(linea);
+            if(!checker.find()){//Si no hace match con el regex de instrucción 
+                if(!linea.contains(" "))//Checar si es una etiqueta
+                    break;
+                String [] fragmentarlinea= linea.split(" ");
+                if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ"))//Checar si es variable o constante
+                    break;
+                file.errores.add(new ErrorASC(9,i));//Error de "margen" 
+            }
+            /*Matcher finPrograma = fin.matcher(linea);//Error de "end"
+            if(finPrograma.find()){//Checar si encontro
+                System.out.println("Entre");
+                endExiste=true;
+            }*/
+
+       
+        }
+        /*if(!endExiste){//Error
+            file.errores.add(new ErrorASC(10,0));
+        }*/
     }
 }
     

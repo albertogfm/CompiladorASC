@@ -16,8 +16,8 @@ public class ErrorASC{
     public int lineaError;
 
 
-    public ErrorASC(int linea, int type){
-        this.lineaError = linea;
+    public ErrorASC(int type,int linea){
+        this.lineaError = linea+1;
         switch (type) {
             case 1:
                 this.typeError = ("001 CONSTANTE INEXISTENTE");
@@ -51,5 +51,8 @@ public class ErrorASC{
                 this.typeError = ("010 NO SE ENCUENTRA END");
                 break;  
         }
+    }
+    public String toString(){
+        return this.typeError +" en la línea "+ this.lineaError+"\n";
     }
 }

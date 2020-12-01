@@ -20,7 +20,7 @@ public class FileMan extends JFrame{
     public ArrayList<String> opCodesFile = new ArrayList<>();
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
-    public static Queue <ErrorASC> errores = new LinkedList<>();
+    public static ArrayList <ErrorASC> errores = new ArrayList<>();
     //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);

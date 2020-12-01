@@ -94,7 +94,6 @@ neg
 nega
 negb
 nop
-org
 oraa
 orab
 psha
@@ -145,3 +144,4 @@ tys
 wai
 xgdx
 xgdy
+end

@@ -5,70 +5,73 @@ import errores.*;
 import compiladorasc.*;
 import java.util.regex.*;
 
+//La clase "Datos" nos permite manejar todos los datos de nuestro archivo como son los mnemonicos, opcode, localidad y direccionamiento 
 public class Datos {
+    //Atributos de la clase
     public String mnemonico, opcode, localidad, direccionamiento, parts[], opers[];
     public String etiqueta, localidadetiqueta, valor;
-    public static int contador;
-    public ArrayList <String> operandos = new ArrayList<String>();
-    public ArrayList <String> relativos= new ArrayList<String>();
+    public static int contador; //Este atributo nos ayuda a determinar la localidad de memoria en la cual insertamos la instrucción
+    public ArrayList <String> operandos = new ArrayList<String>(); //Se creó una lista de operandos para poder guardarlos
+    public ArrayList <String> relativos= new ArrayList<String>();  //Se creó una lista "relativos" para guardar instrucciones que sean relativas
     FileMan file = new FileMan(); 
-    int saltos, i,numLinea;
+    public int saltos, i,numLinea;
     public CompiladorASC com = new CompiladorASC();
-    
-    //public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
-        //SetSplits(instruccion,etiqueta,etiquetas);
-    //}
-    public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas, int numlinea){// LDAA $45 Constructor de la clase, generará un menemónico con su direccionamiento y opcode correspondiente
-        this.numLinea=numlinea;
-        SetSplits(instruccion,etiqueta,etiquetas,numlinea);
+
+    //Métodos de la clase
+
+    public Datos(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas, int numlinea){// Constructor de la clase, generará un mnemónico con su direccionamiento, operandos  y opcode correspondiente
+        
+        this.numLinea=numlinea; //Asociamos a la instrucción el numero de linea que tiene en el archivo
+        SetSplits(instruccion,etiqueta,etiquetas,numlinea);//El método SetSplits se encarga de construir el dato correctamente.
     }
-    void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){
-        Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");               
+    
+    void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){ //Generar el dato correctamente
+        Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
         Matcher checker;
-        if(instruccion.length()<5){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
-            if(etiqueta.peek()!=null)
+        if(instruccion.length()<=5){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
+
+            if(etiqueta.peek()!=null)//Si se leyo una etiqueta previamente, le asociamos a la misma la localidad del dato a crear.
                 this.etiqueta=etiqueta.poll();
-            if(file.readNemon(instruccion.toLowerCase())){
+
+            if(file.readNemon(instruccion.toLowerCase())){//El método readNemon nos ayuda a identificar si la linea contiene un mnemonico valido, en caso contrario se crea el error "MNEMONICO INEXISTENTE"
                 this.mnemonico=instruccion.toLowerCase();
-                this.direccionamiento= "inh";
-                this.localidad = SetLocalidad(contador);
-                this.operandos.add(" ");
-                this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-                if(this.opcode.length()==4)
+                this.direccionamiento= "inh";//Identifica si la instrucción es "inherente"
+                this.localidad = SetLocalidad(contador);//Se identifica su localidad
+                this.operandos.add(" ");//Al no tener operandos se rellena con un espacio vacio 
+
+                //Trataremos los opcode de las instrucciones 
+                this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento); //Con este método obtenemos el opcode de la instrucción.
+                if(this.opcode.length()==4)//Si el opcode tiene 16 bits, le sumamos 2 localidades de memoria en caso contrario solo le agragamos 1 localidad
                     this.contador+=2;
                 else
                     this.contador+=1;
             }
-            else{
+            else{//Si el mnemonico no es valido se generará el error tipo 4
                 file.errores.add(new ErrorASC(4,linea));
             }
         }
         
-        else{ //En otro caso, evaluaremos caso por caso para generar la instrucción correctamente.
-            parts = instruccion.split(" ");
-            if(!file.readNemon(parts[0].toLowerCase()))
+        else{ //Si la linea tiene más carácteres evaluaremos caso por caso para generar la instrucción correctamente
+            parts = instruccion.split(" ");//Separamos la instrucción por espacio paraa identificar mnemónico-operandos
+            if(!file.readNemon(parts[0].toLowerCase())) //Si al separar las línea de instrucción se identifica que el mnemónico no existe, no se genera ningún dato
                 file.errores.add(new ErrorASC(4,linea));
             else{
-                if(mnemonicosREL(parts[0])){
+                if(mnemonicosREL(parts[0])){ //Este método revisa si el mnemónico corresponde a uno relativo, si lo es generamos el dato en este momento
                     this.mnemonico=parts[0].toLowerCase();
                     this.operandos.add(parts[1]);
                     this.direccionamiento="rel";
-                    this.localidad=SetLocalidad(contador);
+                    this.localidad=SetLocalidad(contador);//Se identifica su localidad
                     this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-                    this.contador+=1;
-                    if(this.opcode.length()==4)
-                        this.contador+=2;
-                    else
-                        this.contador+=1;
+                    this.contador+=2;//Se agregan sus respectivas casillas
                     return;
                 }
-                if(parts[0].equals("ORG")|| parts[0].equals("org")){
+                if(parts[0].equals("ORG")|| parts[0].equals("org")){ //Si lo primero que leemos es un org, inicializamos nuestra localidad de memoria de acuerdo al argumento que tenga el org
                     String nuevaLocalidad = parts[1].substring(1);
                     contador=hexadecimalADecimal(nuevaLocalidad);
                     return;
                 }
 
-                if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){
+                if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){//Si el mnemonico
                     if(etiqueta.peek()!=null)
                         this.etiqueta=etiqueta.poll();
                     this.mnemonico=parts[0].toLowerCase();
@@ -108,26 +111,49 @@ public class Datos {
                             else
                                 checker = TagorCons.matcher(parts[1].substring(1));
                         if(checker.find()){
-                            if(file.constantesYvariables.containsKey(parts[1].substring(1))){
+                            if(file.constantesYvariables.containsKey(parts[1].substring(1)) || file.constantesYvariables.containsKey(parts[1])){
                                 this.localidad = SetLocalidad(contador);
                                 this.mnemonico=parts[0].toLowerCase();
-                                if(parts[1].charAt(0)=='#')
+                                if(parts[1].charAt(0)=='#'){
                                     valor = file.constantesYvariables.get(parts[1].substring(1));
-                                else
+                                    if(valor.substring(1, 3).equals("00"))
+                                        valor="$"+valor.substring(3);
+                                    if((valor.length()==3||valor.length()==5))
+                                        this.direccionamiento="imm";
+                                    else{
+                                        file.errores.add(new ErrorASC(7,linea));
+                                        return;
+                                    }
+                                }
+                                else{
                                     valor = file.constantesYvariables.get(parts[1]);
+                                    System.out.println(valor.substring(1,3));
+                                    if(valor.substring(1, 3).equals("00")){
+                                        valor="$"+valor.substring(3);
+                                        System.out.println(valor);
+                                    }
+                                    if((valor.length()==3))
+                                        this.direccionamiento="dir";
+                                    else
+                                        if(valor.length()==5)
+                                            this.direccionamiento="ext";
+                                        else{
+                                            file.errores.add(new ErrorASC(7,linea));
+                                            return;
+                                    }
+                                }
                                 if(valor.substring(1).length() == 2)
                                     this.contador += 1;
                                 else
                                     this.contador += 2;
                                 this.operandos.add(valor);
-                                this.direccionamiento = SetDireccionamiento(valor);
                                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
                                 if(this.opcode.length()==4)
                                     this.contador+=2;
                                 else
                                     this.contador+=1;  
                                 return;
-                            }    
+                            }                            
                             if(etiquetas.contains(parts[1])){
                                 if(mnemonicosREL(parts[0])){}
                                 else{
@@ -145,6 +171,12 @@ public class Datos {
                                 }
 
                             }
+                            else{
+                                file.errores.add(new ErrorASC(1,linea));
+                                this.operandos.add(null);
+                            }
+                            if(operandos.get(0)==null)
+                               return;
                         }                    
                         else{
                             this.localidad = SetLocalidad(contador);   
@@ -179,11 +211,13 @@ public class Datos {
                         else
                             this.direccionamiento="indy";
                         } 
-                    }
-            
-
+                    }      
             this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
             this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+            if(this.opcode==null){
+                file.errores.add(new ErrorASC(7,linea));
+                return;
+            }    
             if(this.opcode.length()==4)
                 this.contador+=2;
             else

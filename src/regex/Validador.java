@@ -15,7 +15,7 @@ public class Validador {
     Error error;
     public int Reconoce(String instruccion,int linea){
         FileMan file = new FileMan();
-        Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(\\$)[0-9]{4})$");
+        Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(((\\$)[0-9a-fA-F]{1,4})))$");
         Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
         Pattern etiquetas = Pattern.compile("[A-Za-z0-9]*");
         Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{4})?)");

@@ -20,11 +20,11 @@ public class ErrorASC{
         this.lineaError = linea+1;
         switch (type) {
             case 1:
-                this.typeError = ("001 CONSTANTE INEXISTENTE");
+                this.typeError = ("001 VARIABLE O CONSTANTE O ETIQUETA INEXISTENTE");
                 break;
-            case 2:
-                this.typeError = ("002 VARIABLE INEXISTENTE");
-                break;   
+            //case 2:
+                //this.typeError = ("002 VARIABLE O CONTANTE INEXISTENTE");
+                //break;   
             case 3:
                 this.typeError = ("003 ETIQUETA INEXISTENTE");
                 break; 

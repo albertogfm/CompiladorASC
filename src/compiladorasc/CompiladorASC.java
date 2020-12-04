@@ -17,6 +17,7 @@ public class CompiladorASC {
     public static ArrayList <Datos> datos2 = new ArrayList<>();
     public ArrayList <String> relativos = new ArrayList<>();
     public static Queue <Datos> saltos = new LinkedList<>();
+    public static ArrayList <Datos> lst = new ArrayList <>();
      
     
     public void Compilador(FileMan file){//Recibe un FileMan
@@ -32,10 +33,11 @@ public class CompiladorASC {
         }
         if(endNotExist)
             file.errores.add(new ErrorASC(10,lineasArc.size()));
+        //prePass(file);    
         if(file.errores.isEmpty()){
-            firstCheck(fileASC.instrucciones);
+            firstCheck(fileASC.instrucciones,file);
             //imprimirArray();
-            SecondCheck();
+            SecondCheck(file);
             imprimirArray();
         }
         else{
@@ -58,7 +60,7 @@ public class CompiladorASC {
         Pattern espaciosBlanco = Pattern.compile("^( )*$");
         Matcher espacios = espaciosBlanco.matcher(linea);
 
-        if(espacios.find() || onlycomentario.find()){ //Ignora los espacios en blanco}
+        if(espacios.find() || onlycomentario.find()){ //Ignora los espacios en blanco
             return true;}
 
         if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
@@ -69,8 +71,9 @@ public class CompiladorASC {
         switch(caso){
             case 1://Constante y variable
                 String[] parts = linea.split(" ");
-                if(parts[1].equals("EQU"))
+                if(parts[1].equals("EQU")){
                     fileASC.constantesYvariables.put(parts[0],parts[2]);
+                }
                 break;
             case 2://Intrucción 
                 while(linea.startsWith(" ")){
@@ -81,7 +84,7 @@ public class CompiladorASC {
                 }
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -96,17 +99,16 @@ public class CompiladorASC {
         return true;
     }
 
-    public void firstCheck(Queue <Datos> datos){ //Agregar elementos a la pila
+    public void firstCheck(Queue <Datos> datos, FileMan file){ //Agregar elementos a la pila
         int i,j,u=0;
         boolean rep= true;
         while(rep){
-            u+=1;
-            
+            u+=1;           
             Datos element = datos.poll(); //Desencolamos
             if(datos.peek()==null)
                 rep=false;
             String buscador;
-            Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");
+            Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");//Verificar si el operando es un valor numérico o una etiqueta
             if(element.opcode.length() == 2) //Opcode
                 compilacion.add(element.opcode);
             if(element.opcode.length() == 4){
@@ -115,21 +117,22 @@ public class CompiladorASC {
             }
             int limite=element.operandos.size();
             for(i=0;i<limite;i++){ //Operandos
+                
                 Matcher checker = TagorCons.matcher(element.operandos.get(i));//Consultar si es una etiqueta, constante o variable
                 if(element.operandos.get(i).equals(" "))
                     break;
-                if(checker.find()){
+                if(checker.find()){//Identifica que el operando es una etiqueta
                     if(mnemonicosREL2(element.mnemonico)){
-                        compilacion.add("--");
+                        compilacion.add("--");//Se deja el espacio en blanco
                         saltos.add(element);
                         break;
                     }
-                    if(etiquetas.contains(element.operandos.get(i))){
+                    if(etiquetas.contains(element.operandos.get(i))){ //Si es una etiqueta buscar su localidad
                         for(j=0;j<datos2.size();j++){
                             buscador=element.operandos.get(i);
                             if(datos2.get(j).etiqueta!=null){
-                                if(datos2.get(j).etiqueta.equals(buscador)){
-                                compilacion.add(datos2.get(j).localidad.substring(0,2));
+                                if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
+                                compilacion.add(datos2.get(j).localidad.substring(0,2));//Agrego la localidad en la tabla de compilacion
                                 compilacion.add(datos2.get(j).localidad.substring(2));
                                 break;
                                 }
@@ -234,7 +237,7 @@ public class CompiladorASC {
     }
 
 
-    public void SecondCheck(){//Segunda pasada  
+    public void SecondCheck(FileMan file){//Segunda pasada  
         int i, dif1,dif2,newBin,decimal=0,n=0,j,x, index=0,nuevaLoc; 
         String localidad=" ",hex;
         boolean rep = true;
@@ -263,21 +266,27 @@ public class CompiladorASC {
                     dif1+=3;
                 dif2=Integer.parseInt(localidad,16);//Localidad donde se encuentra la etiqueta
                 int diferenciaNegativa=(dif2-dif1)-1;//Diferencia de localidades
-                diferenciaNegativa=-1*diferenciaNegativa;
-                String binario = Long.toBinaryString(diferenciaNegativa);
-                while(binario.length()<8){
-                    binario = '0'+binario;   
+                if(diferenciaNegativa==-127){
+                    file.errores.add(new ErrorASC(8,element.numLinea));
                 }
-                newBin = Integer.parseInt(twosCompliment(binario));
-                decimal=binarioDec(newBin);
-                hex=Integer.toHexString(decimal);                
-                for(x=0;x<compilacion.size();x++){
-                    if(compilacion.get(x).equals("--")){
-                        compilacion.set(x,hex.toUpperCase());
-                        break;
+                else{
+                    diferenciaNegativa=-1*diferenciaNegativa;
+                    String binario = Long.toBinaryString(diferenciaNegativa);
+                    while(binario.length()<8){
+                        binario = '0'+binario;   
                     }
-                } 
-            }          
+                    newBin = Integer.parseInt(twosCompliment(binario));
+                    decimal=binarioDec(newBin);
+                    hex=Integer.toHexString(decimal);                
+                    for(x=0;x<compilacion.size();x++){
+                        if(compilacion.get(x).equals("--")){
+                            compilacion.set(x,hex.toUpperCase());
+                            break;
+                        }
+                    }
+                }
+            }     
+
             else{//Salto positivo
                 dif1=Integer.parseInt(element.localidad,16);
                 dif2=Integer.parseInt(localidad,16);
@@ -293,21 +302,27 @@ public class CompiladorASC {
                     else
                         dif1+=4;
                 int diferenciaPositiva=(dif2-dif1)-1;
-                String result2=Integer.toHexString(diferenciaPositiva);
-                nuevaLoc = dif1+diferenciaPositiva;
-                result2=Integer.toHexString(diferenciaPositiva);
-                if(result2.length()==1)
-                    result2='0'+result2;
-                for(x=0;x<compilacion.size();x++){
-                    if(compilacion.get(x).equals("--")){
-                        compilacion.set(x,result2.toUpperCase());
-                        break;
+                if(diferenciaPositiva==128){
+                    file.errores.add(new ErrorASC(8,element.numLinea));
+                }
+                else{
+                    String result2=Integer.toHexString(diferenciaPositiva);
+                    nuevaLoc = dif1+diferenciaPositiva;
+                    result2=Integer.toHexString(diferenciaPositiva);
+                    if(result2.length()==1)
+                        result2='0'+result2;
+                    for(x=0;x<compilacion.size();x++){
+                        if(compilacion.get(x).equals("--")){
+                            compilacion.set(x,result2.toUpperCase());
+                            break;
+                        }
                     }
+                }
+                
             }
-        
-        }
         }
     }
+
     public String twosCompliment(String bin) {
         int suma1, suma2=1,total;
         StringBuilder bina = new StringBuilder(bin);
@@ -322,6 +337,7 @@ public class CompiladorASC {
         total=suma1+suma2;
         return Long.toBinaryString(total);
     }
+
     public int binarioDec(int binario){
        int resto, decimal=0, i=0;
        while (binario != 0){
@@ -360,6 +376,137 @@ public class CompiladorASC {
             file.errores.add(new ErrorASC(10,0));
         }*/
     }
+    public void prePass(FileMan file){
+        Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");
+        Matcher checker; //TagorCons.matcher(element.operandos.get(i));
+        int i,j,n;
+        String buscador,operando;
+        Datos element=null;
+        for(n=0;n<datos2.size();n++)
+            element = datos2.get(n);
+            for(i=0;i<element.operandos.size();i++){
+                
+                if(element.direccionamiento.equals("inh") && element.operandos.get(0).equals(" ")){
+                    if(element.opcode.equals("--")&& element.operandos.get(0).equals(" ")){
+                        file.errores.add(new ErrorASC(5,element.numLinea));
+                        break;
+                    }
+                }
+                
+                if(!element.operandos.get(0).equals(" ") && element.direccionamiento.equals("inh"))
+                    file.errores.add(new ErrorASC(6,element.numLinea));
+                
+                if(element.direccionamiento.equals("imm")){
+                    checker = TagorCons.matcher(element.operandos.get(i));
+                    if(checker.find()){
+                        if(etiquetas.contains(element.operandos.get(i))){
+                            for(j=0;j<datos2.size();j++){
+                                buscador=element.operandos.get(i);
+                                if(datos2.get(j).etiqueta!=null){
+                                    if(datos2.get(j).etiqueta.equals(buscador)){
+                                        if(datos2.get(j).localidad.length()==3 || datos2.get(j).localidad.length()==5){}
+                                        else{
+                                            file.errores.add(new ErrorASC(7,element.numLinea));
+                                            break;
+                                        }
+                                    }
+                                }     
+                            }                        
+                        }
+                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
+                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
+                                if(buscador.length()== 3 || buscador.length()== 5){}
+                                else{
+                                    file.errores.add(new ErrorASC(7,element.numLinea));
+                                    break;
+                                }
+                        }
+                    }
+                    else{
+                        operando=element.operandos.get(i);
+                        if(operando.charAt(1)=='$')
+                            operando=operando.substring(1);
+                        if(operando.length()==2 || operando.length()==4){}
+                        else{
+                            file.errores.add(new ErrorASC(7,element.numLinea));
+                            break;                            
+                        }
+                    }
+                }
+                if(element.direccionamiento.equals("dir") || element.direccionamiento.equals("indx")|| element.direccionamiento.equals("indy")){
+                    checker = TagorCons.matcher(element.operandos.get(i));
+                    if(checker.find()){
+                        if(etiquetas.contains(element.operandos.get(i))){
+                            for(j=0;j<datos2.size();j++){
+                                buscador=element.operandos.get(i);
+                                if(datos2.get(j).etiqueta!=null){
+                                    if(datos2.get(j).etiqueta.equals(buscador)){
+                                        if(datos2.get(j).localidad.length()==4 || datos2.get(j).localidad.length()==2){}
+                                        else{
+                                            file.errores.add(new ErrorASC(7,element.numLinea));
+                                            break;
+                                        }
+                                    }
+                                }     
+                            }                        
+                        }
+                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
+                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
+                                if(buscador.length()== 2){}
+                                else{
+                                    file.errores.add(new ErrorASC(7,element.numLinea));
+                                    break;
+                                }
+                        }
+                    }
+                    else{
+                        if(element.operandos.get(i).length()==2){}
+                        operando=element.operandos.get(i);
+                        if(operando.charAt(0)=='$')
+                            operando=operando.substring(1);
+                        if(operando.length()==2){}
+                        else{
+                            file.errores.add(new ErrorASC(7,element.numLinea));
+                            break;                            
+                        }
+                    }
+                }
+                if(element.direccionamiento.equals("ext")){
+                    checker = TagorCons.matcher(element.operandos.get(i));
+                    if(checker.find()){
+                        if(etiquetas.contains(element.operandos.get(i))){
+                            for(j=0;j<datos2.size();j++){
+                                buscador=element.operandos.get(i);
+                                if(datos2.get(j).etiqueta!=null){
+                                    if(datos2.get(j).etiqueta.equals(buscador)){
+                                        if(datos2.get(j).localidad.length()==4 || datos2.get(j).localidad.length()==2){}
+                                        else{
+                                            file.errores.add(new ErrorASC(7,element.numLinea));
+                                            break;
+                                        }
+                                    }
+                                }     
+                            }                        
+                        }
+                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
+                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
+                                if(buscador.length()== 4){}
+                                else{
+                                    file.errores.add(new ErrorASC(7,element.numLinea));
+                                    break;
+                                }
+                        }
+                    }
+                    else{
+                        if(element.operandos.get(i).length()==4){}
+                        else{
+                            file.errores.add(new ErrorASC(7,element.numLinea));
+                            break;                            
+                        }
+                    }
+            }
+    }
+}
 }
     
     

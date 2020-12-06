@@ -38,7 +38,6 @@ public class Datos {
                 this.direccionamiento= "inh";//Identifica si la instrucción es "inherente"
                 this.localidad = SetLocalidad(contador);//Se identifica su localidad
                 this.operandos.add(" ");//Al no tener operandos se rellena con un espacio vacio 
-
                 //Trataremos los opcode de las instrucciones 
                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento); //Con este método obtenemos el opcode de la instrucción.
                 if(this.opcode.length()==4)//Si el opcode tiene 16 bits, le sumamos 2 localidades de memoria en caso contrario solo le agragamos 1 localidad
@@ -70,7 +69,18 @@ public class Datos {
                     contador=hexadecimalADecimal(nuevaLocalidad);
                     return;
                 }
-
+                if(parts[0].equals("FCB")|| parts[0].equals("fcb")){ //Si lo primero que leemos es un org, inicializamos nuestra localidad de memoria de acuerdo al argumento que tenga el org
+                    System.out.println("Entre");
+                    opers=parts[1].split(",");
+                    this.operandos.add(opers[0]);
+                    this.operandos.add(opers[1]);
+                    this.mnemonico="Directiva FCB";
+                    this.direccionamiento="Directiva ensamblador";
+                    this.opcode="0";
+                    this.localidad=SetLocalidad(contador);
+                    this.contador+=2;
+                    return;
+                }
                 if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){//Si el mnemonico
                     if(etiqueta.peek()!=null)
                         this.etiqueta=etiqueta.poll();

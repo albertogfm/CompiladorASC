@@ -109,15 +109,22 @@ public class CompiladorASC {
                 rep=false;
             String buscador;
             Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");//Verificar si el operando es un valor numérico o una etiqueta
+            if(element.mnemonico.equals("Directiva FCB")){}
+            else{
             if(element.opcode.length() == 2) //Opcode
                 compilacion.add(element.opcode);
             if(element.opcode.length() == 4){
                 compilacion.add(element.opcode.substring(0,2));
                 compilacion.add(element.opcode.substring(2));
+                }
             }
             int limite=element.operandos.size();
             for(i=0;i<limite;i++){ //Operandos
-                
+                if(element.mnemonico.equals("Directiva FCB")){
+                    compilacion.add(element.operandos.get(0).substring(1));
+                    compilacion.add(element.operandos.get(1).substring(1));
+                    break;
+                }    
                 Matcher checker = TagorCons.matcher(element.operandos.get(i));//Consultar si es una etiqueta, constante o variable
                 if(element.operandos.get(i).equals(" "))
                     break;

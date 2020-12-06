@@ -70,6 +70,7 @@ public class CompiladorASC {
         caso = checker.Reconoce(linea,numLinea);//Solo linea 
         switch(caso){
             case 1://Constante y variable
+                linea = deleteSpacesIntermedium(linea);
                 String[] parts = linea.split(" ");
                 if(parts[1].equals("EQU")){
                     fileASC.constantesYvariables.put(parts[0],parts[2]);
@@ -157,12 +158,12 @@ public class CompiladorASC {
                             }
                     }
                 }
-            else{
-                Convertidor(element.operandos.get(i));
+                else{
+                    Convertidor(element.operandos.get(i));
+                }
             }
         }
     }
-}
 
     public void Convertidor(String numero){ //Checa si el operando es hexadecimal, si no la convierte
         String nuevo, convertido;
@@ -389,7 +390,7 @@ public class CompiladorASC {
         int i,j,n;
         String buscador,operando;
         Datos element=null;
-        for(n=0;n<datos2.size();n++)
+        for(n=0;n<datos2.size();n++){
             element = datos2.get(n);
             for(i=0;i<element.operandos.size();i++){
                 
@@ -511,9 +512,45 @@ public class CompiladorASC {
                             break;                            
                         }
                     }
+                }
             }
+        }
     }
-}
+    
+    public String deleteSpacesIntermedium(String linea){
+        int sub;
+        if(linea.charAt(linea.length()-1) == ' '){
+            String lineaF = " ";
+            for (int i=linea.length(); i > 0 ; i--){
+                if(linea.charAt(i-1) == ' '){
+                    lineaF = linea.substring(0, i-1);
+                }else{
+                    break;
+                }
+            linea = lineaF; 
+            }
+        }    
+ 
+        
+        ArrayList<Character> lineaFinal = new ArrayList<>(); 
+        for (int i=0 ; i < linea.length() ; i ++){
+            if (linea.charAt(i) == (' ')){
+                if(!(linea.charAt(i+1) == (' '))){
+                    lineaFinal.add(linea.charAt(i));
+                }
+            }else{
+                lineaFinal.add(linea.charAt(i));
+            }  
+        }
+        StringBuilder builder = new StringBuilder(lineaFinal.size());
+        for(Character ch: lineaFinal){
+            builder.append(ch);
+        }
+        linea =builder.toString();
+        
+        return linea;
+    }
+    
 }
     
     

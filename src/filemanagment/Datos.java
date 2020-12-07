@@ -26,10 +26,10 @@ public class Datos {
     }
     
     void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){ //Generar el dato correctamente
-        Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
+        Pattern TagorCons = Pattern.compile("^(([A-Za-z_0-9]+))$"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
         Matcher checker;
+        String ind;
         if(instruccion.length()<=5){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
-
             if(etiqueta.peek()!=null)//Si se leyo una etiqueta previamente, le asociamos a la misma la localidad del dato a crear.
                 this.etiqueta=etiqueta.poll();
 
@@ -51,10 +51,11 @@ public class Datos {
         }
         
         else{ //Si la linea tiene más carácteres evaluaremos caso por caso para generar la instrucción correctamente
-            parts = instruccion.split(" ");//Separamos la instrucción por espacio paraa identificar mnemónico-operandos
+            parts = instruccion.split(" ");//Separamos la instrucción por espacio paraa identificar mnemónico-operandos          
             if(!file.readNemon(parts[0].toLowerCase())) //Si al separar las línea de instrucción se identifica que el mnemónico no existe, no se genera ningún dato
                 file.errores.add(new ErrorASC(4,linea));
             else{
+                System.out.println(parts[0].toLowerCase());
                 if(mnemonicosREL(parts[0])){ //Este método revisa si el mnemónico corresponde a uno relativo, si lo es generamos el dato en este momento
                     this.mnemonico=parts[0].toLowerCase();
                     this.operandos.add(parts[1]);
@@ -70,7 +71,6 @@ public class Datos {
                     return;
                 }
                 if(parts[0].equals("FCB")|| parts[0].equals("fcb")){ //Si lo primero que leemos es un org, inicializamos nuestra localidad de memoria de acuerdo al argumento que tenga el org
-                    System.out.println("Entre");
                     opers=parts[1].split(",");
                     this.operandos.add(opers[0]);
                     this.operandos.add(opers[1]);
@@ -79,6 +79,18 @@ public class Datos {
                     this.opcode="0";
                     this.localidad=SetLocalidad(contador);
                     this.contador+=2;
+                    return;
+                }
+                if(parts[0].toLowerCase().equals("reset")){
+                    opers=parts[2].split(",");
+                    System.out.println(opers[0]);
+                    System.out.println(opers[1]);
+                    this.mnemonico="RESET";
+                    this.direccionamiento="--";
+                    this.operandos.add(opers[0]);
+                    this.operandos.add(opers[1]);
+                    this.opcode="--";
+                    this.localidad=SetLocalidad(contador);
                     return;
                 }
                 if(parts.length == 2 && (parts[0].toLowerCase().equals("bclr") || parts[0].toLowerCase().equals("bset"))){//Si el mnemonico
@@ -115,12 +127,14 @@ public class Datos {
                             this.contador+=1;
                         }
                         checker = TagorCons.matcher(parts[1]);
-                        if(parts[1].charAt(0)=='#')
+                        if(parts[1].charAt(0)=='#'){
                             if(parts[1].charAt(1)=='$')
                                 checker = TagorCons.matcher(parts[1].substring(0));
                             else
                                 checker = TagorCons.matcher(parts[1].substring(1));
-                        if(checker.find()){
+                        }
+                        Boolean bandera=checker.find();
+                        if(bandera){
                             if(file.constantesYvariables.containsKey(parts[1].substring(1)) || file.constantesYvariables.containsKey(parts[1])){
                                 this.localidad = SetLocalidad(contador);
                                 this.mnemonico=parts[0].toLowerCase();
@@ -137,10 +151,9 @@ public class Datos {
                                 }
                                 else{
                                     valor = file.constantesYvariables.get(parts[1]);
-                                    System.out.println(valor.substring(1,3));
+                                    System.out.println("Tengo valor: "+valor);
                                     if(valor.substring(1, 3).equals("00")){
                                         valor="$"+valor.substring(3);
-                                        System.out.println(valor);
                                     }
                                     if((valor.length()==3))
                                         this.direccionamiento="dir";
@@ -189,39 +202,48 @@ public class Datos {
                                return;
                         }                    
                         else{
-                            this.localidad = SetLocalidad(contador);   
-                            if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
+                            System.out.println("aqui no");
+                            this.localidad = SetLocalidad(contador);
+                            if(parts[1].contains(",")){
+                                ind=parts[1].substring(0, 3);
                                 this.contador+=1;
-                            else
-                                this.contador+=2;
-                            this.operandos.add(parts[1]);   
+                                this.operandos.add(parts[1]);
+                            }
+                            else{
+                                if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
+                                    this.contador+=1;
+                                else
+                                    this.contador+=2;
+                                this.operandos.add(parts[1]);  
+                            }
                         }
                     }    
-                        this.mnemonico=parts[0].toLowerCase();      
+                    this.mnemonico=parts[0].toLowerCase();      
                 }
                 if(parts.length==3){
+                    System.out.println("Entre");
                     if(etiqueta.peek()!=null)
                         this.etiqueta=etiqueta.poll();
-                    this.mnemonico=parts[0].toLowerCase();
-                    this.localidad = SetLocalidad(contador);
-                    opers=parts[1].split(",");
-                    if(opers.length==2){
-                        this.operandos.add(opers[0]);
-                        this.operandos.add(opers[1]);
-                        this.operandos.add(parts[2]);
-                        this.contador+=3;
-                    }
-                    else{
-                        this.operandos.add(opers[0]);
-                        this.operandos.add(opers[2]);
-                        this.operandos.add(parts[2]);
-                        this.contador+=3;
-                        if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X')
-                            this.direccionamiento="indx";
-                        else
-                            this.direccionamiento="indy";
+                        this.mnemonico=parts[0].toLowerCase();
+                        this.localidad = SetLocalidad(contador);
+                        opers=parts[1].split(",");
+                        if(opers.length==2){
+                            this.operandos.add(opers[0]);
+                            this.operandos.add(opers[1]);
+                            this.operandos.add(parts[2]);
+                            this.contador+=3;
+                        }
+                        else{
+                            this.operandos.add(opers[0]);
+                            this.operandos.add(opers[2]);
+                            this.operandos.add(parts[2]);
+                            this.contador+=3;
+                            if(opers[1].charAt(0) == 'x' || opers[1].charAt(0) == 'X')
+                                this.direccionamiento="indx";
+                            else
+                                this.direccionamiento="indy";
                         } 
-                    }      
+                }      
             this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
             this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
             if(this.opcode==null){
@@ -245,6 +267,7 @@ public class Datos {
     
     public void ImprimirDatos(){
         System.out.println("----------------------------------------------------------------------------------");
+        System.out.println("Numero de linea: "+this.numLinea);
         System.out.println("Mnemonico: "+this.mnemonico);
         System.out.println("Modo de direccionamiento: "+this.direccionamiento);
         if(this.direccionamiento.equals("inh"))

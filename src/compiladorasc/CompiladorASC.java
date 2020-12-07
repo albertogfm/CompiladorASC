@@ -64,13 +64,13 @@ public class CompiladorASC {
             return true;}
 
         if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
-            String[] parts = linea.split("*");
+            String[] parts = linea.split("\\*");
             linea=parts[0];
         }
         caso = checker.Reconoce(linea,numLinea);//Solo linea 
         switch(caso){
             case 1://Constante y variable
-                linea = deleteSpacesIntermedium(linea);
+                linea=deleteSpacesIntermedium(linea);
                 String[] parts = linea.split(" ");
                 if(parts[1].equals("EQU")){
                     fileASC.constantesYvariables.put(parts[0],parts[2]);
@@ -83,6 +83,7 @@ public class CompiladorASC {
                 while(linea.endsWith(" ")){
                     linea=linea.substring(0,linea.length()-1);
                 }
+                linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
                         dato.ImprimirDatos();
@@ -92,10 +93,24 @@ public class CompiladorASC {
                 break;
             case 3://Etiquetas
                 etiqueta.add(linea);
-                etiquetas.add(linea);
+                //etiquetas.add(linea);
                 break;
             case 4://Fin 
                 return false;
+            case 6://Reset
+                while(linea.startsWith(" ")){
+                    linea=linea.substring(1);
+                }
+                while(linea.endsWith(" ")){
+                    linea=linea.substring(0,linea.length()-1);
+                }
+                linea=deleteSpacesIntermedium(linea);
+                dato = new Datos(linea,etiqueta,etiquetas,numLinea);
+                    if(dato.opcode!=null){
+                        dato.ImprimirDatos();
+                        fileASC.instrucciones.add(dato);
+                        datos2.add(dato);
+                    }
         }
         return true;
     }
@@ -359,30 +374,28 @@ public class CompiladorASC {
 
     public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
         Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
-        //Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{4})?)");   
-        //boolean endExiste= false;
+        Pattern espaciosBlanco = Pattern.compile("^\\s*$");
         for(int i = 0 ; i< file.lineasArchivoASC.size();i++){
             String linea=file.lineasArchivoASC.get(i);
             Matcher checker= Textoespaciado.matcher(linea);
-            if(!checker.find()){//Si no hace match con el regex de instrucción 
-                if(!linea.contains(" "))//Checar si es una etiqueta
-                    break;
-                String [] fragmentarlinea= linea.split(" ");
-                if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ"))//Checar si es variable o constante
-                    break;
-                file.errores.add(new ErrorASC(9,i));//Error de "margen" 
-            }
-            /*Matcher finPrograma = fin.matcher(linea);//Error de "end"
-            if(finPrograma.find()){//Checar si encontro
-                System.out.println("Entre");
-                endExiste=true;
-            }*/
-
-       
+            Matcher checker2= espaciosBlanco.matcher(linea);
+            if(!checker2.find()){
+                linea = deleteSpacesIntermedium(linea);
+                if(!checker.find()){//Si no hace match con el regex de instrucción 
+                    if(linea.contains(" ")){//Checar si es una etiqueta
+                        String [] fragmentarlinea= linea.split(" ");
+                        if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")){
+                        }
+                        else{
+                            file.errores.add(new ErrorASC(9,i));//Error de "margen
+                        }        
+                    }
+                    else{
+                        etiquetas.add(linea);
+                    }    
+                }            
+            } 
         }
-        /*if(!endExiste){//Error
-            file.errores.add(new ErrorASC(10,0));
-        }*/
     }
     public void prePass(FileMan file){
         Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");

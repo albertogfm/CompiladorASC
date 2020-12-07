@@ -34,9 +34,8 @@ public class CompiladorASC {
         if(endNotExist)
             file.errores.add(new ErrorASC(10,lineasArc.size()));
         //prePass(file);    
-        if(file.errores.isEmpty()){
+        if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
-            //imprimirArray();
             SecondCheck(file);
             imprimirArray();
         }
@@ -53,9 +52,9 @@ public class CompiladorASC {
         Datos dato;
         int caso;
         Validador checker = new Validador();
-        Pattern comentariosUnicamente = Pattern.compile("^((\\*)[a-zA-Z0-9_\\*( )]*)$");
+        Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         Matcher onlycomentario = comentariosUnicamente.matcher(linea);
-        Pattern comentarios = Pattern.compile("((\\*)[a-zA-Z0-9_\\*( )]*)");//Matcher y Patern de Comentarios y espacios en blanco
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
         Matcher comentario = comentarios.matcher(linea);
         Pattern espaciosBlanco = Pattern.compile("^( )*$");
         Matcher espacios = espaciosBlanco.matcher(linea);
@@ -86,7 +85,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        dato.ImprimirDatos();
+                        //dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -107,7 +106,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        dato.ImprimirDatos();
+                        //dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -125,7 +124,7 @@ public class CompiladorASC {
                 rep=false;
             String buscador;
             Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");//Verificar si el operando es un valor numérico o una etiqueta
-            if(element.mnemonico.equals("Directiva FCB")){}
+            if(element.mnemonico.equals("Directiva FCB")||element.mnemonico.equals("RESET")){}
             else{
             if(element.opcode.length() == 2) //Opcode
                 compilacion.add(element.opcode);
@@ -373,163 +372,51 @@ public class CompiladorASC {
     }
 
     public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
-        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),]*)$");
+        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),_]*)$");
         Pattern espaciosBlanco = Pattern.compile("^\\s*$");
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
+        Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         for(int i = 0 ; i< file.lineasArchivoASC.size();i++){
             String linea=file.lineasArchivoASC.get(i);
-            Matcher checker= Textoespaciado.matcher(linea);
-            Matcher checker2= espaciosBlanco.matcher(linea);
-            if(!checker2.find()){
+            //System.out.println("Linea:"+linea );
+            Matcher comentario = comentarios.matcher(linea);
+            Matcher onlycomment = comentariosUnicamente.matcher(linea);
+            Boolean check3=comentario.find();
+            Boolean check4=onlycomment.find();
+            if(check4)
+                continue;
+            if(check3){//Ignora el comentario y se queda con la linea de instrucciones
+                String[] parts = linea.split("\\*");
+                linea=parts[0];
                 linea = deleteSpacesIntermedium(linea);
-                if(!checker.find()){//Si no hace match con el regex de instrucción 
+            }
+            Matcher checker2= espaciosBlanco.matcher(linea);
+            Boolean check2= checker2.find();
+            if(!check2){
+                linea = deleteSpacesIntermedium(linea);
+                Matcher checker= Textoespaciado.matcher(linea);
+                Boolean check1= checker.find();
+                //System.out.println(linea);
+                if(!check1){//Si no hace match con el regex de instrucción
                     if(linea.contains(" ")){//Checar si es una etiqueta
                         String [] fragmentarlinea= linea.split(" ");
-                        if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")){
+                        if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")||(fragmentarlinea[0].toLowerCase().equals("reset")&&fragmentarlinea[1].toLowerCase().equals("fcb"))){
                         }
                         else{
+                            System.out.println("El error es: "+linea);
                             file.errores.add(new ErrorASC(9,i));//Error de "margen
                         }        
                     }
                     else{
-                        etiquetas.add(linea);
+                        Matcher com=comentariosUnicamente.matcher(linea);
+                        Boolean ban = com.find();
+                        if(!ban)
+                            etiquetas.add(linea);
                     }    
                 }            
             } 
         }
-    }
-    public void prePass(FileMan file){
-        Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");
-        Matcher checker; //TagorCons.matcher(element.operandos.get(i));
-        int i,j,n;
-        String buscador,operando;
-        Datos element=null;
-        for(n=0;n<datos2.size();n++){
-            element = datos2.get(n);
-            for(i=0;i<element.operandos.size();i++){
-                
-                if(element.direccionamiento.equals("inh") && element.operandos.get(0).equals(" ")){
-                    if(element.opcode.equals("--")&& element.operandos.get(0).equals(" ")){
-                        file.errores.add(new ErrorASC(5,element.numLinea));
-                        break;
-                    }
-                }
-                
-                if(!element.operandos.get(0).equals(" ") && element.direccionamiento.equals("inh"))
-                    file.errores.add(new ErrorASC(6,element.numLinea));
-                
-                if(element.direccionamiento.equals("imm")){
-                    checker = TagorCons.matcher(element.operandos.get(i));
-                    if(checker.find()){
-                        if(etiquetas.contains(element.operandos.get(i))){
-                            for(j=0;j<datos2.size();j++){
-                                buscador=element.operandos.get(i);
-                                if(datos2.get(j).etiqueta!=null){
-                                    if(datos2.get(j).etiqueta.equals(buscador)){
-                                        if(datos2.get(j).localidad.length()==3 || datos2.get(j).localidad.length()==5){}
-                                        else{
-                                            file.errores.add(new ErrorASC(7,element.numLinea));
-                                            break;
-                                        }
-                                    }
-                                }     
-                            }                        
-                        }
-                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
-                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
-                                if(buscador.length()== 3 || buscador.length()== 5){}
-                                else{
-                                    file.errores.add(new ErrorASC(7,element.numLinea));
-                                    break;
-                                }
-                        }
-                    }
-                    else{
-                        operando=element.operandos.get(i);
-                        if(operando.charAt(1)=='$')
-                            operando=operando.substring(1);
-                        if(operando.length()==2 || operando.length()==4){}
-                        else{
-                            file.errores.add(new ErrorASC(7,element.numLinea));
-                            break;                            
-                        }
-                    }
-                }
-                if(element.direccionamiento.equals("dir") || element.direccionamiento.equals("indx")|| element.direccionamiento.equals("indy")){
-                    checker = TagorCons.matcher(element.operandos.get(i));
-                    if(checker.find()){
-                        if(etiquetas.contains(element.operandos.get(i))){
-                            for(j=0;j<datos2.size();j++){
-                                buscador=element.operandos.get(i);
-                                if(datos2.get(j).etiqueta!=null){
-                                    if(datos2.get(j).etiqueta.equals(buscador)){
-                                        if(datos2.get(j).localidad.length()==4 || datos2.get(j).localidad.length()==2){}
-                                        else{
-                                            file.errores.add(new ErrorASC(7,element.numLinea));
-                                            break;
-                                        }
-                                    }
-                                }     
-                            }                        
-                        }
-                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
-                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
-                                if(buscador.length()== 2){}
-                                else{
-                                    file.errores.add(new ErrorASC(7,element.numLinea));
-                                    break;
-                                }
-                        }
-                    }
-                    else{
-                        if(element.operandos.get(i).length()==2){}
-                        operando=element.operandos.get(i);
-                        if(operando.charAt(0)=='$')
-                            operando=operando.substring(1);
-                        if(operando.length()==2){}
-                        else{
-                            file.errores.add(new ErrorASC(7,element.numLinea));
-                            break;                            
-                        }
-                    }
-                }
-                if(element.direccionamiento.equals("ext")){
-                    checker = TagorCons.matcher(element.operandos.get(i));
-                    if(checker.find()){
-                        if(etiquetas.contains(element.operandos.get(i))){
-                            for(j=0;j<datos2.size();j++){
-                                buscador=element.operandos.get(i);
-                                if(datos2.get(j).etiqueta!=null){
-                                    if(datos2.get(j).etiqueta.equals(buscador)){
-                                        if(datos2.get(j).localidad.length()==4 || datos2.get(j).localidad.length()==2){}
-                                        else{
-                                            file.errores.add(new ErrorASC(7,element.numLinea));
-                                            break;
-                                        }
-                                    }
-                                }     
-                            }                        
-                        }
-                        if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
-                            buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
-                                if(buscador.length()== 4){}
-                                else{
-                                    file.errores.add(new ErrorASC(7,element.numLinea));
-                                    break;
-                                }
-                        }
-                    }
-                    else{
-                        if(element.operandos.get(i).length()==4){}
-                        else{
-                            file.errores.add(new ErrorASC(7,element.numLinea));
-                            break;                            
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
+    }    
     public String deleteSpacesIntermedium(String linea){
         int sub;
         if(linea.charAt(linea.length()-1) == ' '){

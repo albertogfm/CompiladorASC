@@ -55,7 +55,6 @@ public class Datos {
             if(!file.readNemon(parts[0].toLowerCase())) //Si al separar las línea de instrucción se identifica que el mnemónico no existe, no se genera ningún dato
                 file.errores.add(new ErrorASC(4,linea));
             else{
-                System.out.println(parts[0].toLowerCase());
                 if(mnemonicosREL(parts[0])){ //Este método revisa si el mnemónico corresponde a uno relativo, si lo es generamos el dato en este momento
                     this.mnemonico=parts[0].toLowerCase();
                     this.operandos.add(parts[1]);
@@ -83,8 +82,6 @@ public class Datos {
                 }
                 if(parts[0].toLowerCase().equals("reset")){
                     opers=parts[2].split(",");
-                    System.out.println(opers[0]);
-                    System.out.println(opers[1]);
                     this.mnemonico="RESET";
                     this.direccionamiento="--";
                     this.operandos.add(opers[0]);
@@ -151,7 +148,6 @@ public class Datos {
                                 }
                                 else{
                                     valor = file.constantesYvariables.get(parts[1]);
-                                    System.out.println("Tengo valor: "+valor);
                                     if(valor.substring(1, 3).equals("00")){
                                         valor="$"+valor.substring(3);
                                     }
@@ -202,7 +198,6 @@ public class Datos {
                                return;
                         }                    
                         else{
-                            System.out.println("aqui no");
                             this.localidad = SetLocalidad(contador);
                             if(parts[1].contains(",")){
                                 ind=parts[1].substring(0, 3);
@@ -221,7 +216,6 @@ public class Datos {
                     this.mnemonico=parts[0].toLowerCase();      
                 }
                 if(parts.length==3){
-                    System.out.println("Entre");
                     if(etiqueta.peek()!=null)
                         this.etiqueta=etiqueta.poll();
                         this.mnemonico=parts[0].toLowerCase();

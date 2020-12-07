@@ -21,6 +21,8 @@ public class FileMan extends JFrame{
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
     public static ArrayList <ErrorASC> errores = new ArrayList<>();
+    public String fileName;
+    public String dirToWrite;
     //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);
@@ -28,11 +30,12 @@ public class FileMan extends JFrame{
                 System.out.println("\tNo se encontró el archivo");
                 return false;
         }
+        this.lineasArchivoASC.clear();
         try {
 
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
-
+                
                 String linea = sc.nextLine();//Lee el contenido del archivo
                 this.lineasArchivoASC.add(linea);
             }
@@ -43,36 +46,39 @@ public class FileMan extends JFrame{
         }
         return true;
     }
-   public void escribirArchivoS19(){
+    public void escribirArchivoS19(){
         try {
-            File file = new File(".\\files\\output\\hola.S19");
+            File file = new File(this.fileName+".S19");
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file, true);
+            FileWriter fw = new FileWriter(file,false);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.append("hi");
+            
+
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-   public void escribirArchivoLST(){
+   	public void escribirArchivoLST(){
         try {
-            File file = new File(".\\files\\output\\hola.LST");
+            File file = new File(this.fileName+".LTS");
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file, true);
+            FileWriter fw = new FileWriter(file, false);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.append("hi");
+            for(int i=0; i< this.lineasArchivoASC.size() ; i++){
+                bw.append(this.lineasArchivoASC.get(i));
+                bw.newLine();
+            }
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-   
-    public String readOpcodes(String nemon, String modo) {
+     public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");
         if(!file.exists()){
                 System.out.println("\tNo se encontró el archivo");
@@ -119,7 +125,7 @@ public class FileMan extends JFrame{
     }
     public String fileSelector(){// Opens a JFrame to select a file in our directory
         FileDialog fc;
-        fc = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+        fc = new FileDialog(this, "Escoga el archivo a compilar", FileDialog.LOAD);
         fc.setDirectory("C:\\");
         fc.setFile("*.asc");
         fc.setVisible(true);
@@ -127,6 +133,9 @@ public class FileMan extends JFrame{
         if(fn==null){
             return null;
         }
+        String[] fileN = fc.getFile().split("(.(ASC|asc))",0);
+        this.fileName = fc.getDirectory()+fileN[0];
+        System.out.println(fc.getDirectory()+fileN[0]);
         return fc.getDirectory()+fc.getFile();
     }
     public String dirSelector(){// Opens a JFrame to select a file in our directory
@@ -139,5 +148,19 @@ public class FileMan extends JFrame{
             return null;
         }
         return fc.getDirectory();
+    }
+    public void escribirErrores(){
+        try {
+            File file = new File(this.dirToWrite+this.fileName+"-Errores-Al-Compilar"+".txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("hi");
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

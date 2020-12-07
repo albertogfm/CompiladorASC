@@ -7,6 +7,7 @@ package graficas;
 
 import filemanagment.FileMan;
 import java.awt.FileDialog;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import compiladorasc.*;
@@ -23,6 +24,7 @@ public class Inicio extends javax.swing.JFrame {
      */
     public Inicio() {
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("/graficas/Motorola-Logo.png")).getImage());
         file= new FileMan();
     }
 
@@ -164,22 +166,31 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_fileBActionPerformed
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed
-        //System.out.println("hola");
+        
         if(this.verif){
+            System.out.println("Compilado");
             System.out.println("Compilado");
             ArrayList<String> arch = this.file.lineasArchivoASC;
             
 
-            CompiladorASC comp = new CompiladorASC();
-            comp.Compilador(this.file);
+            CompiladorASC compi = new CompiladorASC();
+            compi.Compilador(this.file);
+            boolean comp = false;
+            if(comp == true){
+                file.escribirArchivoLST();
+                file.escribirArchivoS19();
             
+            }else{
+                JOptionPane.showMessageDialog(this,"El código fuente contiene errores, cheacr el archivo con los errores","    ERROR AL COMPILAR",2);
+                file.escribirErrores();
+            }
+
             this.verif=false;
         }else{
-            JOptionPane.showMessageDialog(this,"Escoge un archivo primero","NO HAY ARCHIVO CARGADO",2);
-        
+            JOptionPane.showMessageDialog(this,"Escoge un archivo primero","    NO HAY ARCHIVO CARGADO",2);
         }
-        //file.escribirArchivoLST();
-        //System.out.println("writing in"+file.dirSelector());
+       
+
     }//GEN-LAST:event_compileBActionPerformed
 
     /**

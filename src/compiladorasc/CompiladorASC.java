@@ -128,17 +128,17 @@ public class CompiladorASC {
             if(element.mnemonico.equals("Directiva FCB")||element.mnemonico.equals("RESET")){}
             else{
             if(element.opcode.length() == 2) //Opcode
-                compilacion.add(element.opcode);
+                compilacion.add(element.opcode.toUpperCase());
             if(element.opcode.length() == 4){
-                compilacion.add(element.opcode.substring(0,2));
-                compilacion.add(element.opcode.substring(2));
+                compilacion.add(element.opcode.substring(0,2).toUpperCase());
+                compilacion.add(element.opcode.substring(2).toUpperCase());
                 }
             }
             int limite=element.operandos.size();
             for(i=0;i<limite;i++){ //Operandos
                 if(element.mnemonico.equals("Directiva FCB")){
-                    compilacion.add(element.operandos.get(0).substring(1));
-                    compilacion.add(element.operandos.get(1).substring(1));
+                    compilacion.add(element.operandos.get(0).substring(1).toUpperCase());
+                    compilacion.add(element.operandos.get(1).substring(1).toUpperCase());
                     break;
                 }    
                 Matcher checker = TagorCons.matcher(element.operandos.get(i));//Consultar si es una etiqueta, constante o variable
@@ -155,8 +155,8 @@ public class CompiladorASC {
                             buscador=element.operandos.get(i);
                             if(datos2.get(j).etiqueta!=null){
                                 if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
-                                compilacion.add(datos2.get(j).localidad.substring(0,2));//Agrego la localidad en la tabla de compilacion
-                                compilacion.add(datos2.get(j).localidad.substring(2));
+                                compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
                                 break;
                                 }
                             }     
@@ -166,10 +166,10 @@ public class CompiladorASC {
                     if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
                         buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
                             if(buscador.length() <= 2)
-                                compilacion.add(buscador);
+                                compilacion.add(buscador.toUpperCase());
                             else{
-                                compilacion.add(buscador.substring(0,2));
-                                compilacion.add(buscador.substring(2,4));
+                                compilacion.add(buscador.substring(0,2).toUpperCase());
+                                compilacion.add(buscador.substring(2,4).toUpperCase());
                             }
                     }
                 }
@@ -300,7 +300,7 @@ public class CompiladorASC {
                     }
                     newBin = Integer.parseInt(twosCompliment(binario));
                     decimal=binarioDec(newBin);
-                    hex=Integer.toHexString(decimal);                
+                    hex=Integer.toHexString(decimal);
                     for(x=0;x<compilacion.size();x++){
                         if(compilacion.get(x).equals("--")){
                             compilacion.set(x,hex.toUpperCase());
@@ -313,7 +313,6 @@ public class CompiladorASC {
             else{//Salto positivo
                 dif1=Integer.parseInt(element.localidad,16);
                 dif2=Integer.parseInt(localidad,16);
-
                 if(element.operandos.size()==1)
                     if(element.opcode.length()==2)
                         dif1+=1;
@@ -379,7 +378,6 @@ public class CompiladorASC {
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         for(int i = 0 ; i< file.lineasArchivoASC.size();i++){
             String linea=file.lineasArchivoASC.get(i);
-            //System.out.println("Linea:"+linea );
             Matcher comentario = comentarios.matcher(linea);
             Matcher onlycomment = comentariosUnicamente.matcher(linea);
             Boolean check3=comentario.find();
@@ -397,14 +395,12 @@ public class CompiladorASC {
                 linea = deleteSpacesIntermedium(linea);
                 Matcher checker= Textoespaciado.matcher(linea);
                 Boolean check1= checker.find();
-                //System.out.println(linea);
                 if(!check1){//Si no hace match con el regex de instrucción
                     if(linea.contains(" ")){//Checar si es una etiqueta
                         String [] fragmentarlinea= linea.split(" ");
                         if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")||(fragmentarlinea[0].toLowerCase().equals("reset")&&fragmentarlinea[1].toLowerCase().equals("fcb"))){
                         }
                         else{
-                            System.out.println("El error es: "+linea);
                             file.errores.add(new ErrorASC(9,i));//Error de "margen
                         }        
                     }

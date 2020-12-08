@@ -86,7 +86,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }

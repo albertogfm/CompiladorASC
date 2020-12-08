@@ -9,7 +9,7 @@ import java.util.regex.*;
 public class Datos {
     //Atributos de la clase
     public String mnemonico, opcode, localidad, direccionamiento, parts[], opers[];
-    public String etiqueta, localidadetiqueta, valor;
+    public String etiqueta, localidadetiqueta, valor,nuevo;
     public static int contador; //Este atributo nos ayuda a determinar la localidad de memoria en la cual insertamos la instrucción
     public ArrayList <String> operandos = new ArrayList<String>(); //Se creó una lista de operandos para poder guardarlos
     public ArrayList <String> relativos= new ArrayList<String>();  //Se creó una lista "relativos" para guardar instrucciones que sean relativas
@@ -238,17 +238,22 @@ public class Datos {
                                 this.direccionamiento="indy";
                         } 
                 }      
-            this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
-            this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
-            if(this.opcode==null){
-                file.errores.add(new ErrorASC(7,linea));
-                return;
-            }    
-            if(this.opcode.length()==4)
-                this.contador+=2;
-            else
-                this.contador+=1;
-        }
+                this.direccionamiento = SetDireccionamiento(this.operandos.get(0));
+                this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento);
+                if(this.opcode==null){
+                    file.errores.add(new ErrorASC(7,linea));
+                    return;
+                }    
+                if(this.opcode.length()==4)
+                    this.contador+=2;
+                else
+                    this.contador+=1;
+                if(operandos.get(0).toLowerCase().contains(",y")||operandos.get(0).toLowerCase().contains(",x")){
+                    this.nuevo =this.operandos.get(0).substring(0,3);
+                    this.operandos.remove(0);
+                    this.operandos.add(this.nuevo);
+                }    
+            }
         }
    }
     

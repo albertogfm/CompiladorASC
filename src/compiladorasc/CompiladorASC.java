@@ -38,6 +38,7 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             imprimirArray();
+            file.opCodesFile = this.compilacion;
         }
         else{
             System.out.println("Se detectaron "+file.errores.size()+" errores :C");

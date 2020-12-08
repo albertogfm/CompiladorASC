@@ -179,10 +179,12 @@ public class Inicio extends javax.swing.JFrame {
             if(comp == true){
                 file.escribirArchivoLST();
                 file.escribirArchivoS19();
+                JOptionPane.showMessageDialog(this,"El código fuente fue compilado con éxito","    COMPILADO",2);
             
             }else{
-                JOptionPane.showMessageDialog(this,"El código fuente contiene errores, cheacr el archivo con los errores","    ERROR AL COMPILAR",2);
                 file.escribirErrores();
+                JOptionPane.showMessageDialog(this,"El código fuente contiene errores, cheacr el archivo con los errores","    ERROR AL COMPILAR",1);
+                
             }
 
             this.verif=false;

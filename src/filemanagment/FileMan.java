@@ -54,8 +54,27 @@ public class FileMan extends JFrame{
             }
             FileWriter fw = new FileWriter(file,false);
             BufferedWriter bw = new BufferedWriter(fw);
+            int localidadStart = 8000;
             
-
+            int numLinAppend = this.opCodesFile.size()/15;
+            int resto = this.opCodesFile.size()%15;
+            int contador = 0;
+            for (int i=0; i< numLinAppend ; i++){
+                bw.append("<"+localidadStart+">" );
+                for(int j=0 ;j<15;j++){
+                    bw.append(" "+this.opCodesFile.get(contador)+" ");
+                    contador++;
+                }
+                bw.append("\n");
+                localidadStart+=10;
+            }
+            if(resto > 0){
+                bw.append("<"+localidadStart+">" );
+                for (int i=0;i<resto ; i++){  
+                    bw.append(" "+this.opCodesFile.get(contador)+" ");
+                    contador++;
+                }
+            }     
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,8 +174,11 @@ public class FileMan extends JFrame{
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file, true);
+            FileWriter fw = new FileWriter(file, false);
             BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("*******************************************************\n");
+            bw.append("*** EL CÓDIGO FUENTE CONTIENE LOS SIGUIENTES ERRORES***\n");
+            bw.append("*******************************************************\n");
             for (int i=0 ; i< this.errores.size() ; i++)
                 bw.append(this.errores.get(i).toString());
             bw.close();

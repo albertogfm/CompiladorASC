@@ -101,7 +101,7 @@ public class Inicio extends javax.swing.JFrame {
         });
 
         text.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        text.setText("PoweredBy: Hanna, Alberto, Cristowama, Eduardo");
+        text.setText("PoweredBy: Hanna, Alberto, Cris, Eduardo");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

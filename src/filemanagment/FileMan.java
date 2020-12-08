@@ -13,6 +13,7 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 import java.util.HashMap;
 import errores.*;
+import javax.swing.ImageIcon;
 
 public class FileMan extends JFrame{
     //Atributos
@@ -145,6 +146,7 @@ public class FileMan extends JFrame{
     public String fileSelector(){// Opens a JFrame to select a file in our directory
         FileDialog fc;
         fc = new FileDialog(this, "Escoga el archivo a compilar", FileDialog.LOAD);
+        fc.setIconImage(new ImageIcon(getClass().getResource("/graficas/Motorola-Logo.png")).getImage());
         fc.setDirectory("C:\\");
         fc.setFile("*.asc");
         fc.setVisible(true);
@@ -186,7 +188,7 @@ public class FileMan extends JFrame{
             e.printStackTrace();
         }
     }
-    public void resetFileman(){
+    public void resetFileman(){ //Elimina todo el contenido de FileMan
         this.lineasArchivoASC.clear();
         this.opCodesFile.clear();
         this.instrucciones.clear();
@@ -194,5 +196,14 @@ public class FileMan extends JFrame{
         this.errores.clear();
         this.dirToWrite = null;
         this.fileName = null;   
+    }
+    public ArrayList<String> listOfErrorToText(){ //Convierte la lista de errores a una lista con String de errores
+        ArrayList<String> errorListString = new ArrayList<>();
+        errorListString.add("******************************************************************\n");
+        errorListString.add("*** EL CÓDIGO FUENTE CONTIENE LOS SIGUIENTES ERRORES***\n");
+        errorListString.add("******************************************************************\n");
+        for (int i=0 ; i< this.errores.size() ; i++)
+                errorListString.add(this.errores.get(i).toString());
+        return errorListString;
     }
 }

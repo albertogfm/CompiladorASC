@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import compiladorasc.*;
+import javax.swing.JFrame;
 
 /**
  *
@@ -184,7 +185,14 @@ public class Inicio extends javax.swing.JFrame {
             }else{
                 file.escribirErrores();
                 JOptionPane.showMessageDialog(this,"El código fuente contiene errores, cheacr el archivo con los errores","    ERROR AL COMPILAR",1);
-                
+                //
+                JFrame frame = new JFrame("ERRORES");
+                frame.add(new ErrorUI(file.listOfErrorToText()));
+                frame.setIconImage(new ImageIcon(getClass().getResource("/graficas/Motorola-Logo.png")).getImage());
+                //Display the window.
+                frame.pack();
+                frame.setVisible(true);
+                //
             }
 
             this.verif=false;

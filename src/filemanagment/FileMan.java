@@ -151,16 +151,26 @@ public class FileMan extends JFrame{
     }
     public void escribirErrores(){
         try {
-            File file = new File(this.dirToWrite+this.fileName+"-Errores-Al-Compilar"+".txt");
+            File file = new File(this.fileName+"-Errores-Al-Compilar"+".txt");
             if (!file.exists()) {
                 file.createNewFile();
             }
             FileWriter fw = new FileWriter(file, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.append("hi");
+            for (int i=0 ; i< this.errores.size() ; i++)
+                bw.append(this.errores.get(i).toString());
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void resetFileman(){
+        this.lineasArchivoASC.clear();
+        this.opCodesFile.clear();
+        this.instrucciones.clear();
+        this.constantesYvariables.clear();
+        this.errores.clear();
+        this.dirToWrite = null;
+        this.fileName = null;   
     }
 }

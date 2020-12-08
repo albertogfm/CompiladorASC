@@ -175,7 +175,7 @@ public class Inicio extends javax.swing.JFrame {
 
             CompiladorASC compi = new CompiladorASC();
             compi.Compilador(this.file);
-            boolean comp = true;
+            boolean comp = this.file.errores.isEmpty();
             if(comp == true){
                 file.escribirArchivoLST();
                 file.escribirArchivoS19();
@@ -189,7 +189,7 @@ public class Inicio extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","    NO HAY ARCHIVO CARGADO",2);
         }
-        this.file = new FileMan();
+        this.file.resetFileman();
 
     }//GEN-LAST:event_compileBActionPerformed
 

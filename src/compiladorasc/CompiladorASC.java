@@ -37,7 +37,7 @@ public class CompiladorASC {
         if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            imprimirArray();
+            //imprimirArray();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -281,7 +281,7 @@ public class CompiladorASC {
                     }
                 } 
             }
-            if(Integer.parseInt(element.localidad,16)>Integer.parseInt(localidad,16)){//Salto negativo
+            if((Integer.parseInt(element.localidad,16)>Integer.parseInt(localidad,16))||(Integer.parseInt(element.localidad,16)==Integer.parseInt(localidad,16))){//Salto negativo
                 dif1=Integer.parseInt(element.localidad,16);//Lo que estamos analizando
                 if(element.operandos.size()==1)
                     dif1+=1;

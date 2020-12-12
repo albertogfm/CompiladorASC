@@ -18,9 +18,9 @@ public class Validador {
         instruccion=deleteSpacesIntermedium(instruccion);
         FileMan file = new FileMan();
         Pattern constantesyVariables = Pattern.compile("^(([A-Za-z0-9_]*)( )+(EQU)( )+(((\\$)[0-9a-fA-F]{1,4})))$");
-        Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),_]*)$");
+        Pattern instruccionASC = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’)?( ),_]*)$");
         Pattern etiquetas = Pattern.compile("^([A-Za-z0-9_]*)$");
-        Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{4})?)");
+        Pattern fin = Pattern.compile("(( )+(END)(( )+(\\$)[0-9]{1,4})?)");
         Pattern reset = Pattern.compile("(( )?(reset|RESET))");        
         Matcher consyvar = constantesyVariables.matcher(instruccion);
         Matcher instruc = instruccionASC.matcher(instruccion);

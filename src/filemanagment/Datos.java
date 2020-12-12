@@ -26,9 +26,13 @@ public class Datos {
     }
     
     void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){ //Generar el dato correctamente
+        System.out.println("Linea "+instruccion);
+        String k = ""; 
         Pattern TagorCons = Pattern.compile("^(([A-Za-z_0-9]+))$"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
         Matcher checker;
         String ind;
+        int ascii;
+        char character;
         if(instruccion.length()<=5){ //Si la instrucción tiene menos de 5 caracteres y no tiene espacio, significa que la instrucción tiene direccionamiento inherente.
             if(etiqueta.peek()!=null)//Si se leyo una etiqueta previamente, le asociamos a la misma la localidad del dato a crear.
                 this.etiqueta=etiqueta.poll();
@@ -149,7 +153,10 @@ public class Datos {
                                 else{
                                     valor = file.constantesYvariables.get(parts[1]);
                                     if(valor.substring(1, 3).equals("00")){
-                                        valor="$"+valor.substring(3);
+                                        if(checkDIR(parts[0])){
+                                            valor="$"+valor.substring(3);
+                                            System.out.println(parts[0]+" "+valor);
+                                        }
                                     }
                                     if((valor.length()==3))
                                         this.direccionamiento="dir";
@@ -199,12 +206,47 @@ public class Datos {
                         }                    
                         else{
                             this.localidad = SetLocalidad(contador);
+                            if(parts[1].contains("’")){
+                                if(parts[1].charAt(0)=='#'){
+                                    System.out.println(parts[1].charAt(2));
+                                    character = parts[1].charAt(2);
+                                    ascii = (int)character;
+                                    this.direccionamiento="imm";
+                                    this.mnemonico=parts[0].toLowerCase();
+                                    this.opcode=file.readOpcodes(parts[0].toLowerCase(),"imm");
+                                    this.contador+=1;
+                                    this.operandos.add(String.valueOf(ascii));
+                                    return;
+                                }    
+                                else{
+                                    character = parts[1].charAt(1);
+                                    ascii=(int)character;
+                                    this.direccionamiento="imm";
+                                    this.mnemonico=parts[0].toLowerCase();
+                                    this.opcode=file.readOpcodes(parts[0].toLowerCase(),"dir");
+                                    this.contador+=1;
+                                    this.operandos.add(String.valueOf(ascii));
+                                    return;
+                                }
+                            }
                             if(parts[1].contains(",")){
                                 ind=parts[1].substring(0, 3);
                                 this.contador+=1;
                                 this.operandos.add(parts[1]);
                             }
                             else{
+                                if(parts[0].toLowerCase().equals("ldx")){
+                                    if(parts[1].charAt(0)=='#')
+                                        if(parts[1].charAt(1)=='$'){
+                                            k = parts[1].substring(2);
+                                            while(k.length()<4){
+                                                k='0'+k;
+                                            }
+                                            parts[1]="#$"+k;
+                                        }
+                                    
+                                }
+                                    
                                 if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
                                     this.contador+=1;
                                 else
@@ -341,6 +383,12 @@ public class Datos {
         this.relativos.add("bvs");
         if(this.relativos.contains(instruccion.toLowerCase()))
             return true;
+        return false;
+    }
+    public boolean checkDIR(String mnemon){
+        if(!file.readOpcodes(mnemon.toLowerCase(),"ext").equals("-- "))
+            if(!file.readOpcodes(mnemon.toLowerCase(),"dir").equals("-- "))
+                return true;
         return false;
     }
     

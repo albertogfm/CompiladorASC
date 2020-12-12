@@ -15,9 +15,9 @@ public class ArchivoRegex{ //CLASE COMPILADOR
       
             
             Pattern expresionINH = Pattern.compile("^([a-zA-Z]( ){3,6})$"); // Identifica el modo de direccionamiento INHERENTE
-            Pattern expresionIMM = Pattern.compile("^([a-zA-Z]{3,6}( )(((#)(\\$)[0-9a-fA-F]{2})|((#)(\\$)[0-9a-fA-F]{4})|((#)[0-9]{2})|((#)[0-9]{4})|((#)'[a-zA-Z])))$");// Identifica el modo de direccionamiento INMEDIATO
-            Pattern expresionEXT = Pattern.compile("^([a-zA-Z]{3,6}( )((\\$)([0-9a-fA-F]{4})|('[a-zA-Z])|([0-9]{4})))$");// Identifica el modo de direcciconamiento EXTENDIDO
-            Pattern expresionDIR = Pattern.compile("^([a-zA-Z]{3,6}( )((\\$)[0-9a-fA-F]{2}|([0-9]{2})|('[a-zA-Z])))$"); // Identifica el modo de direccionamiento  DIRECTO
+            Pattern expresionIMM = Pattern.compile("^([a-zA-Z]{3,6}( )(((#)(\\$)[0-9a-fA-F]{2})|((#)(\\$)[0-9a-fA-F]{4})|((#)[0-9]{2})|((#)[0-9]{4})|((#)(’)[a-zA-Z])))$");// Identifica el modo de direccionamiento INMEDIATO
+            Pattern expresionEXT = Pattern.compile("^([a-zA-Z]{3,6}( )((\\$)([0-9a-fA-F]{4})|(’[a-zA-Z])|([0-9]{4})))$");// Identifica el modo de direcciconamiento EXTENDIDO
+            Pattern expresionDIR = Pattern.compile("^([a-zA-Z]{3,6}( )((\\$)[0-9a-fA-F]{2}|([0-9]{2})|(’[a-zA-Z])))$"); // Identifica el modo de direccionamiento  DIRECTO
             Pattern expresionREL = Pattern.compile("^([a-zA-Z]{3,6}( )[a-zA-Z]*)$");// Identifica el modo de direccionamiento el RELATIVO
             Pattern expresionINDX = Pattern.compile("^([a-zA-Z]{3,6}( )(((\\$)([0-9a-fA-F]{2})(,[xX]))|(([0-9]{2})(,[xX]))))$");// Identifica el modo de direccionamiento INDEXADO RESPECTO A "Y"
             Pattern expresionINDY = Pattern.compile("^([a-zA-Z]{3,6}( )(((\\$)([0-9a-fA-F]{2})(,[yY]))|(([0-9]{2})(,[yY]))))$");// Identifica el modo de direccionamiento INDEXADO RESPECTO A "X"

@@ -37,7 +37,7 @@ public class CompiladorASC {
         if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            //imprimirArray();
+            imprimirArray();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -107,7 +107,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -372,7 +372,7 @@ public class CompiladorASC {
     }
 
     public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
-        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?( ),_]*)$");
+        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’)( ),_]*)$");
         Pattern espaciosBlanco = Pattern.compile("^\\s*$");
         Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
@@ -396,6 +396,7 @@ public class CompiladorASC {
                 Matcher checker= Textoespaciado.matcher(linea);
                 Boolean check1= checker.find();
                 if(!check1){//Si no hace match con el regex de instrucción
+                    System.out.println("Entre "+linea);
                     if(linea.contains(" ")){//Checar si es una etiqueta
                         String [] fragmentarlinea= linea.split(" ");
                         if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")||(fragmentarlinea[0].toLowerCase().equals("reset")&&fragmentarlinea[1].toLowerCase().equals("fcb"))){

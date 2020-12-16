@@ -179,7 +179,7 @@ public class Inicio extends javax.swing.JFrame {
             boolean comp = this.file.errores.isEmpty();
             if(comp == true){
                 
-                file.escribirArchivoLST(compi.datos2);
+                //file.escribirArchivoLST(compi.datos2);
                 file.escribirArchivoS19();
                 System.out.println("END IN"+FileMan.endInLine);
                 System.out.println("ORG IN"+FileMan.firstOrg.get(0));

@@ -14,6 +14,7 @@ public class CompiladorASC {
     public Queue <String> etiqueta = new LinkedList<>();
     public static ArrayList <String> etiquetas = new ArrayList<>();//Etiquetas declaradas
     public static ArrayList <String> compilacion = new ArrayList<>();
+    public static ArrayList <String> compilacionLST = new ArrayList<>();
     public static ArrayList <Datos> datos2 = new ArrayList<>();
     public ArrayList <String> relativos = new ArrayList<>();
     public static Queue <Datos> saltos = new LinkedList<>();
@@ -38,6 +39,7 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             //imprimirArray();
+            imprimirArrayLST();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -129,11 +131,15 @@ public class CompiladorASC {
             Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");//Verificar si el operando es un valor numérico o una etiqueta
             if(element.mnemonico.equals("Directiva FCB")||element.mnemonico.equals("RESET")){}
             else{
-            if(element.opcode.length() == 2) //Opcode
+            if(element.opcode.length() == 2){ //Opcode
                 compilacion.add(element.opcode.toUpperCase());
-            if(element.opcode.length() == 4){
+                compilacionLST.add("-"+element.opcode.toUpperCase()+"-");
+            }
+                if(element.opcode.length() == 4){
                 compilacion.add(element.opcode.substring(0,2).toUpperCase());
                 compilacion.add(element.opcode.substring(2).toUpperCase());
+                compilacionLST.add("-"+element.opcode.substring(0,2).toUpperCase());
+                compilacionLST.add(element.opcode.substring(2).toUpperCase()+"-");
                 }
             }
             int limite=element.operandos.size();
@@ -141,6 +147,8 @@ public class CompiladorASC {
                 if(element.mnemonico.equals("Directiva FCB")){
                     compilacion.add(element.operandos.get(0).substring(1).toUpperCase());
                     compilacion.add(element.operandos.get(1).substring(1).toUpperCase());
+                    compilacionLST.add(element.operandos.get(0).substring(1).toUpperCase());
+                    compilacionLST.add(element.operandos.get(1).substring(1).toUpperCase());
                     break;
                 }    
                 Matcher checker = TagorCons.matcher(element.operandos.get(i));//Consultar si es una etiqueta, constante o variable
@@ -149,6 +157,7 @@ public class CompiladorASC {
                 if(checker.find()){//Identifica que el operando es una etiqueta
                     if(mnemonicosREL2(element.mnemonico)){
                         compilacion.add("--");//Se deja el espacio en blanco
+                        compilacionLST.add("--");
                         saltos.add(element);
                         break;
                     }
@@ -159,6 +168,8 @@ public class CompiladorASC {
                                 if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
                                 compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
                                 compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
+                                compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
                                 break;
                                 }
                             }     
@@ -167,11 +178,15 @@ public class CompiladorASC {
                     }
                     if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
                         buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
-                            if(buscador.length() <= 2)
+                            if(buscador.length() <= 2){
                                 compilacion.add(buscador.toUpperCase());
+                                compilacionLST.add(buscador.toUpperCase());
+                            }
                             else{
                                 compilacion.add(buscador.substring(0,2).toUpperCase());
                                 compilacion.add(buscador.substring(2,4).toUpperCase());
+                                compilacionLST.add(buscador.substring(0,2).toUpperCase());
+                                compilacionLST.add(buscador.substring(2,4).toUpperCase());
                             }
                     }
                 }
@@ -191,11 +206,14 @@ public class CompiladorASC {
                 nuevo = numero.substring(1);
                 if(nuevo.length() == 2){
                     compilacion.add(nuevo.toUpperCase());
+                    compilacionLST.add(nuevo.toUpperCase());
                     return;
                 }
                 else{
                     compilacion.add(nuevo.substring(0,2).toUpperCase());//Opcode 8bits
                     compilacion.add(nuevo.substring(2).toUpperCase());//Opcode 16 bits
+                    compilacionLST.add(nuevo.substring(0,2).toUpperCase());//Opcode 8bits
+                    compilacionLST.add(nuevo.substring(2).toUpperCase());//Opcode 16 bits                   
                     return;
                 }    
             }
@@ -204,11 +222,14 @@ public class CompiladorASC {
             nuevo = numero.substring(2);
             if(nuevo.length() == 2){
                 compilacion.add(nuevo.toUpperCase());
+                compilacionLST.add(nuevo.toUpperCase());
                 return;
             }
             else{
                 compilacion.add(nuevo.substring(0,2).toUpperCase());
                 compilacion.add(nuevo.substring(2).toUpperCase());
+                compilacionLST.add(nuevo.substring(0,2).toUpperCase());
+                compilacionLST.add(nuevo.substring(2).toUpperCase());
                 return;
             }    
         }
@@ -220,11 +241,15 @@ public class CompiladorASC {
             convertido = Integer.toHexString(convertidor);
             if(convertido.length()==1 || convertido.length()==3)
                 convertido= '0'+convertido;
-            if(convertido.length() <=2 )
+            if(convertido.length() <=2 ){
                 compilacion.add(convertido.toUpperCase());
+                compilacionLST.add(convertido.toUpperCase());
+            }    
             else{
                 compilacion.add(convertido.substring(0,2).toUpperCase());
-                compilacion.add(convertido.substring(2).toUpperCase());    
+                compilacion.add(convertido.substring(2).toUpperCase()); 
+                compilacionLST.add(convertido.substring(0,2).toUpperCase());
+                compilacionLST.add(convertido.substring(2).toUpperCase());
             }    
         }
     }
@@ -258,7 +283,12 @@ public class CompiladorASC {
     }
     public void imprimirArray(){
         for(int i=0;i<compilacion.size();i++)
-            System.out.println(compilacion.get(i)+".......");
+            System.out.println(compilacion.get(i));
+    }
+    
+    public void imprimirArrayLST(){
+        for(int i=0;i<compilacionLST.size();i++)
+            System.out.println(compilacionLST.get(i));
     }
 
 
@@ -306,6 +336,7 @@ public class CompiladorASC {
                     for(x=0;x<compilacion.size();x++){
                         if(compilacion.get(x).equals("--")){
                             compilacion.set(x,hex.toUpperCase());
+                            compilacionLST.set(x,hex.toUpperCase());
                             break;
                         }
                     }
@@ -338,6 +369,7 @@ public class CompiladorASC {
                     for(x=0;x<compilacion.size();x++){
                         if(compilacion.get(x).equals("--")){
                             compilacion.set(x,result2.toUpperCase());
+                            compilacionLST.set(x,result2.toUpperCase());
                             break;
                         }
                     }

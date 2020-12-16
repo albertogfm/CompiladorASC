@@ -97,10 +97,9 @@ public class FileMan extends JFrame{
             Validador checker = new Validador();
             int contadorDeVar = FileMan.poolOfConstAndVar.size(), caso;
             String linea = "";
+            String lastDir="";
             int contadorOrgs=FileMan.firstOrg.size(),h=0,contadorDatos=0;
             //Validador val = new Validador();
-            System.out.println("Datos"+ datos.size());
-            System.out.println("LineasArch"+this.lineasArchivoASC.size());
             try {
                 File file = new File(this.fileName+".LTS");
                 if (!file.exists()) {
@@ -108,11 +107,17 @@ public class FileMan extends JFrame{
                 }
                 FileWriter fw = new FileWriter(file, false);
                 BufferedWriter bw = new BufferedWriter(fw);
+                int maxString =String.valueOf(this.lineasArchivoASC.size()).length();
+                System.out.println("el:"+ maxString);
                 for(int i=0; i< this.lineasArchivoASC.size() ; i++){
                     linea = this.lineasArchivoASC.get(i);
+                    String lineaToPrint = linea;
                     Matcher onlycomentario = comentariosUnicamente.matcher(linea);
                     Matcher espacios = espaciosBlanco.matcher(linea);
                     if(espacios.find() || onlycomentario.find()){
+                        System.out.println("eu:"+String.valueOf(i+1).length());
+                        for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                            bw.append(" ");
                         bw.append(String.valueOf(i+1)+"|"+linea );
                         bw.newLine();                     
                     }else{
@@ -122,11 +127,15 @@ public class FileMan extends JFrame{
                             linea=parts[0];
                         }
                         caso = checker.Reconoce(linea,i);
+                        int contaSpaces=0;
+                        
                         switch(caso){
                             case 1://constantes y var
                                 String varToFind = FileMan.poolOfConstAndVar.poll();
                                 String valorVar =FileMan.constantesYvariables.get(varToFind);
-                                bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1)+"|"+linea );
+                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                    bw.append(" ");
+                                bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1)+"|"+lineaToPrint );
                                 bw.newLine();
                                 break;
                             case 2:// instruccion
@@ -137,23 +146,46 @@ public class FileMan extends JFrame{
                                     linea=linea.substring(0,linea.length()-1);
                                 }
                                 String[] org = linea.split(" ");
+                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                    bw.append(" ");
                                 if(org[0].equals("ORG")|| org[0].equals("org")){
-                                    System.out.println("ENTREEEEEEEEEEEE");
+                                    bw.append(String.valueOf(i+1)+"|"+org[1].substring(1)+"|"+ lineaToPrint);
+                                    bw.newLine();
+                                    lastDir=org[1];
                                 }else{
                                     Datos data = datosQ.poll();
-                                    System.out.println(linea);
+                                    lastDir = data.localidad;
                                     bw.append(String.valueOf(i+1)+"|"+data.localidad+"|"+data.opcode);
-                                    if(!data.operandos.isEmpty()){
-                                        for(int j = 0 ; j< data.operandos.size(); j++)
-                                            bw.append(data.operandos.get(j)+" ");
-                                        bw.append("|"+linea );
-                                        bw.newLine();
-                                    }    
+                                    if(!data.direccionamiento.equals("inh")){
+                                        System.out.println((i+1) +"|"+ data.operandos.size());
+                                        for(int j = 0 ; j< data.operandos.size(); j++){
+                                            String op = data.operandos.get(j);
+                                            if(op.contains("#")){
+                                                String[] separar = op.split("#");
+                                                op = separar[1];
+                                            }
+                                            if(op.contains("$")){
+                                                String[] separar = op.split("\\$");
+                                                op = separar[1];
+                                            }
+                                            bw.append(" "+op);
+                                        }
+                                    }
+                                    bw.append("|"+lineaToPrint);
+                                    bw.newLine();
                                 }
                                 break;
                             case 3://etiqueta
+                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                    bw.append(" ");
+                                bw.append(String.valueOf(i+1)+"|"+lastDir+"|"+lineaToPrint);
+                                bw.newLine();
                                 break;
                             case 4:// ende
+                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                    bw.append(" ");
+                                bw.append(String.valueOf(i+1)+"|"+lastDir+"|"+lineaToPrint);
+                                bw.newLine();
                                 break;
                             case 5:
                                 break;

@@ -69,6 +69,7 @@ public class Datos {
                     return;
                 }
                 if(parts[0].equals("ORG")|| parts[0].equals("org")){ //Si lo primero que leemos es un org, inicializamos nuestra localidad de memoria de acuerdo al argumento que tenga el org
+                    FileMan.firstOrg.add(linea);
                     String nuevaLocalidad = parts[1].substring(1);
                     contador=hexadecimalADecimal(nuevaLocalidad);
                     return;

@@ -1,0 +1,4 @@
+*******************************************************
+*** EL CÓDIGO FUENTE CONTIENE LOS SIGUIENTES ERRORES***
+*******************************************************
+004 MNEMÓNICO INEXISTENTE en la línea 8

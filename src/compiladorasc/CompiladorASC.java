@@ -37,7 +37,7 @@ public class CompiladorASC {
         if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            imprimirArray();
+            //imprimirArray();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -74,6 +74,7 @@ public class CompiladorASC {
                 String[] parts = linea.split(" ");
                 if(parts[1].equals("EQU")){
                     fileASC.constantesYvariables.put(parts[0],parts[2]);
+                    FileMan.poolOfConstAndVar.add(parts[0]);
                 }
                 break;
             case 2://Intrucción 
@@ -96,6 +97,7 @@ public class CompiladorASC {
                 //etiquetas.add(linea);
                 break;
             case 4://Fin 
+                FileMan.endInLine = numLinea;
                 return false;
             case 6://Reset
                 while(linea.startsWith(" ")){
@@ -256,7 +258,7 @@ public class CompiladorASC {
     }
     public void imprimirArray(){
         for(int i=0;i<compilacion.size();i++)
-            System.out.println(compilacion.get(i));
+            System.out.println(compilacion.get(i)+".......");
     }
 
 

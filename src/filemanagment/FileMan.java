@@ -13,7 +13,10 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 import java.util.HashMap;
 import errores.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
+import regex.Validador;
 
 public class FileMan extends JFrame{
     //Atributos
@@ -21,9 +24,12 @@ public class FileMan extends JFrame{
     public ArrayList<String> opCodesFile = new ArrayList<>();
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
+    public static Queue <String> poolOfConstAndVar = new LinkedList<>();
     public static ArrayList <ErrorASC> errores = new ArrayList<>();
     public String fileName;
     public String dirToWrite;
+    public static int endInLine;
+    public static ArrayList<Integer> firstOrg = new ArrayList<>();
     //Functions
     public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
         File file = new File(nombreAr);
@@ -81,23 +87,87 @@ public class FileMan extends JFrame{
             e.printStackTrace();
         }
     }
-   	public void escribirArchivoLST(){
-        try {
-            File file = new File(this.fileName+".LTS");
-            if (!file.exists()) {
-                file.createNewFile();
+   	public void escribirArchivoLST(ArrayList<Datos> datos){   
+            Queue<Datos> datosQ = new LinkedList<>();
+            for(int i=0; i<datos.size();i++)
+                datosQ.add(datos.get(i));
+            Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
+            Pattern espaciosBlanco = Pattern.compile("^( )*$");
+            Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
+            Validador checker = new Validador();
+            int contadorDeVar = FileMan.poolOfConstAndVar.size(), caso;
+            String linea = "";
+            int contadorOrgs=FileMan.firstOrg.size(),h=0,contadorDatos=0;
+            //Validador val = new Validador();
+            System.out.println("Datos"+ datos.size());
+            System.out.println("LineasArch"+this.lineasArchivoASC.size());
+            try {
+                File file = new File(this.fileName+".LTS");
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter fw = new FileWriter(file, false);
+                BufferedWriter bw = new BufferedWriter(fw);
+                for(int i=0; i< this.lineasArchivoASC.size() ; i++){
+                    linea = this.lineasArchivoASC.get(i);
+                    Matcher onlycomentario = comentariosUnicamente.matcher(linea);
+                    Matcher espacios = espaciosBlanco.matcher(linea);
+                    if(espacios.find() || onlycomentario.find()){
+                        bw.append(String.valueOf(i+1)+"|"+linea );
+                        bw.newLine();                     
+                    }else{
+                        Matcher comentario = comentarios.matcher(linea);
+                        if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
+                            String[] parts = linea.split("\\*");
+                            linea=parts[0];
+                        }
+                        caso = checker.Reconoce(linea,i);
+                        switch(caso){
+                            case 1://constantes y var
+                                String varToFind = FileMan.poolOfConstAndVar.poll();
+                                String valorVar =FileMan.constantesYvariables.get(varToFind);
+                                bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1)+"|"+linea );
+                                bw.newLine();
+                                break;
+                            case 2:// instruccion
+                                while(linea.startsWith(" ")){
+                                    linea=linea.substring(1);
+                                }
+                                while(linea.endsWith(" ")){
+                                    linea=linea.substring(0,linea.length()-1);
+                                }
+                                String[] org = linea.split(" ");
+                                if(org[0].equals("ORG")|| org[0].equals("org")){
+                                    System.out.println("ENTREEEEEEEEEEEE");
+                                }else{
+                                    Datos data = datosQ.poll();
+                                    System.out.println(linea);
+                                    bw.append(String.valueOf(i+1)+"|"+data.localidad+"|"+data.opcode);
+                                    if(!data.operandos.isEmpty()){
+                                        for(int j = 0 ; j< data.operandos.size(); j++)
+                                            bw.append(data.operandos.get(j)+" ");
+                                        bw.append("|"+linea );
+                                        bw.newLine();
+                                    }    
+                                }
+                                break;
+                            case 3://etiqueta
+                                break;
+                            case 4:// ende
+                                break;
+                            case 5:
+                                break;
+                            case 6:// reset
+                                break;
+                        }
+                    }
+                    //bw.newLine();
+                }
+                bw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            FileWriter fw = new FileWriter(file, false);
-            BufferedWriter bw = new BufferedWriter(fw);
-            for(int i=0; i< this.lineasArchivoASC.size() ; i++){
-                bw.append(this.lineasArchivoASC.get(i));
-                bw.newLine();
-            }
-            bw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-    }
      public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");
         if(!file.exists()){

@@ -178,6 +178,10 @@ public class FileMan extends JFrame{
                             case 3://etiqueta
                                 for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                     bw.append(" ");
+                                if(lastDir.contains("$")){
+                                    String[] separar = lastDir.split("\\$");
+                                    lastDir = separar[1];
+                                }
                                 bw.append(String.valueOf(i+1)+"|"+lastDir+"|"+lineaToPrint);
                                 bw.newLine();
                                 break;

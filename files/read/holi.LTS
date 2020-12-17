@@ -1,20 +1,20 @@
- 1|1789                CONSTANTE EQU $1789
- 2|0000                VAR EQU $0000
- 3|0002                VAR1 EQU $0002
- 4|0003                VAR2 EQU $0003
- 5|8000                   ORG $8000
- 6|8000                INICIO
+ 1|1789                    CONSTANTE EQU $1789
+ 2|0000                    VAR EQU $0000
+ 3|0002                    VAR1 EQU $0002
+ 4|0003                    VAR2 EQU $0003
+ 5|8000                       ORG $8000
+ 6|8000                    INICIO
  7|8000|CE 17 89				   LDX #CONSTANTE
- 8|8000                SALTO
- 9|8003|01				   NOP
-10|8004|01				   NOP
-11|8004                SALTO1
-12|8005|01				   NOP
-13|8006|01				   NOP
-14|8006                SALTO2
-15|8007|01				   NOP
-16|8008|01				   NOP
-17|8009|09				   DEX
+ 8|8000                    SALTO
+ 9|8003|01             				   NOP
+10|8004|01             				   NOP
+11|8004                    SALTO1
+12|8005|01             				   NOP
+13|8006|01             				   NOP
+14|8006                    SALTO2
+15|8007|01             				   NOP
+16|8008|01             				   NOP
+17|8009|09             				   DEX
 18|800a|26 F7				   BNE SALTO
 19|800c|22 F7				   BHI SALTO1
 20|800e|13 07 80 F5				   BRCLR $07,#$80 SALTO2
@@ -25,6 +25,6 @@
 25|8022|14 49 80				   BSET $49,#$80
 26|8025|1D 70 88				   BCLR $70,X,#$88
 27|8028|18 1C 91 7C				   BSET $91,Y,#$7C
-28|8028                SALTE
+28|8028                    SALTE
 29|802c|7E 80 00				   JMP INICIO
-30|802c                   END
+30|802c                       END

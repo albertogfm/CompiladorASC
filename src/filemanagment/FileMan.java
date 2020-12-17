@@ -123,7 +123,9 @@ public class FileMan extends JFrame{
                     System.out.println("eu:"+String.valueOf(i+1).length());
                     for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                         bw.append(" ");
-                    bw.append(String.valueOf(i+1)+"|"+lineaToPrint );
+                    bw.append(String.valueOf(i+1)+"|");
+                    bw.append("                    ");
+                    bw.append(lineaToPrint);
                     bw.newLine();                     
                 }else{
                     Matcher comentario = comentarios.matcher(linea);
@@ -133,7 +135,7 @@ public class FileMan extends JFrame{
                     }
                     caso = checker.Reconoce(linea,i);
                     int contaSpaces=0;
-
+                    linea = checker.deleteSpacesIntermedium(linea);
                     switch(caso){
                         case 1://Caso de imprimir constantes y variables
                             String varToFind = FileMan.poolOfConstAndVar.poll();
@@ -141,7 +143,7 @@ public class FileMan extends JFrame{
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
                             bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1));
-                            bw.append("                ");//4 tabs
+                            bw.append("                    ");//4 tabs
                             bw.append(lineaToPrint);
                             bw.newLine();
                             
@@ -154,51 +156,56 @@ public class FileMan extends JFrame{
                             while(linea.endsWith(" ")){
                                 linea=linea.substring(0,linea.length()-1);
                             }
+                            System.out.println(linea);
                             String[] org = linea.split(" ");
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
                             if(org[0].equals("ORG")|| org[0].equals("org")){
+                                System.out.println("--"+org[1]);
                                 bw.append(String.valueOf(i+1)+"|"+org[1].substring(1));
-                                bw.append("                ");//4 tabs
+                                bw.append("                    ");//4 tabs
                                 bw.append(lineaToPrint);
                                 bw.newLine();
                                 lastDir=org[1];
                             }else{
-                                Datos data = datosQ.poll();
-                                lastDir = data.localidad;
-                                bw.append(String.valueOf(i+1)+"|"+data.localidad+"|");
+                                try{
+                                    Datos data = datosQ.poll();
+                                    lastDir = data.localidad;
+                                    bw.append(String.valueOf(i+1)+"|"+data.localidad+"|");
 
 
-                                if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
-                                    String opcode = compLST.poll();
-                                    opcode = opcode.substring(1, 3);
-                                    bw.append( opcode );
-                                    contadorTabs++;
-                                }else{
-                                    String opcode = compLST.poll();
-                                    opcode = opcode.substring(1);
-                                    bw.append(opcode +" ");
-                                    contadorTabs++;
-                                    opcode = compLST.poll();
-                                    opcode = opcode.substring(0,2);
-                                    bw.append(opcode);
-                                    contadorTabs++;
-                                }
-                                if(!data.direccionamiento.equals("inh")){
-                                    try{
-                                    while(!compLST.peek().startsWith("-"))
-                                        bw.append(" "+compLST.poll());
+                                    if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
+                                        String opcode = compLST.poll();
+                                        opcode = opcode.substring(1, 3);
+                                        bw.append( opcode );
                                         contadorTabs++;
-                                    }catch (NullPointerException e){
-                                        
+                                    }else{
+                                        String opcode = compLST.poll();
+                                        opcode = opcode.substring(1);
+                                        bw.append(opcode +" ");
+                                        contadorTabs++;
+                                        opcode = compLST.poll();
+                                        opcode = opcode.substring(0,2);
+                                        bw.append(opcode);
+                                        contadorTabs++;
                                     }
-                                }else{
-                                    contadorTabs =(contadorTabs*2)+1;
-                                    for(int y=0 ; y<16-contadorTabs ; y++)
-                                        bw.append("");
+                                    if(!data.direccionamiento.equals("inh")){
+
+                                        while(!compLST.peek().startsWith("-"))
+                                            bw.append(" "+compLST.poll());
+                                            contadorTabs++;
+
+                                    }else{
+                                        contadorTabs =(contadorTabs*2)+1;
+                                        for(int y=0 ; y<16-contadorTabs ; y++)
+                                            bw.append(" ");
+                                    }
+                                    
+                                }catch (NullPointerException e){
+                                        
                                 }
                                 bw.append("\t\t\t\t"+lineaToPrint);
-                                bw.newLine();    
+                                    bw.newLine();
                              }
                              break;
                          case 3://etiqueta
@@ -209,7 +216,7 @@ public class FileMan extends JFrame{
                                  lastDir = separar[1];
                              }
                              bw.append(String.valueOf(i+1)+"|"+lastDir);
-                             bw.append("                ");//4 tabs
+                             bw.append("                    ");//4 tabs
                                 bw.append(lineaToPrint);
                              bw.newLine();
                              break;
@@ -217,7 +224,7 @@ public class FileMan extends JFrame{
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
                             bw.append(String.valueOf(i+1)+"|"+lastDir);
-                            bw.append("                ");//4 tabs
+                            bw.append("                    ");//4 tabs
                             bw.append(lineaToPrint);
                             bw.newLine();
                             break;

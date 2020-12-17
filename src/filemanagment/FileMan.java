@@ -129,7 +129,7 @@ public class FileMan extends JFrame{
                 Matcher espacios = espaciosBlanco.matcher(linea);
                 
                 if(espacios.find() || onlycomentario.find()){ //Caso de que la linea es espacio en blanco o solo un comentario
-                    System.out.println("eu:"+String.valueOf(i+1).length());
+                    //System.out.println("eu:"+String.valueOf(i+1).length());
                     for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                         bw.append(" ");
                     bw.append(String.valueOf(i+1)+"|");

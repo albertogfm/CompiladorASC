@@ -39,7 +39,8 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             imprimirArray();
-            initEtiq();
+            if(etiquetas.size()!=0)
+                initEtiq();
             //imprimirArrayLST();
             //imprimirEtiquetas();
             file.opCodesFile = this.compilacion;

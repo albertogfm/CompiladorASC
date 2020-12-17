@@ -43,6 +43,10 @@ public class Datos {
                 this.operandos.add(" ");//Al no tener operandos se rellena con un espacio vacio 
                 //Trataremos los opcode de las instrucciones 
                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento); //Con este método obtenemos el opcode de la instrucción.
+                if(this.opcode.equals("--")){
+                    file.errores.add(new ErrorASC(5,linea));
+                    return;
+                }    
                 if(this.opcode.length()==4)//Si el opcode tiene 16 bits, le sumamos 2 localidades de memoria en caso contrario solo le agragamos 1 localidad
                     this.contador+=2;
                 else

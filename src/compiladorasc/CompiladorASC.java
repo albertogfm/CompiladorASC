@@ -204,6 +204,8 @@ public class CompiladorASC {
         if(numero.charAt(0)=='$' || numero.substring(0, 2).equals("#$")){
             if(numero.charAt(0)=='$'){
                 nuevo = numero.substring(1);
+                if(nuevo.length()==1 || nuevo.length()==3)
+                    nuevo='0'+nuevo;
                 if(nuevo.length() == 2){
                     compilacion.add(nuevo.toUpperCase());
                     compilacionLST.add(nuevo.toUpperCase());
@@ -220,6 +222,8 @@ public class CompiladorASC {
         }
         if(numero.substring(0, 2).equals ("#$")){
             nuevo = numero.substring(2);
+            if(nuevo.length()==1 || nuevo.length()==3)
+                    nuevo='0'+nuevo;
             if(nuevo.length() == 2){
                 compilacion.add(nuevo.toUpperCase());
                 compilacionLST.add(nuevo.toUpperCase());
@@ -430,7 +434,6 @@ public class CompiladorASC {
                 Matcher checker= Textoespaciado.matcher(linea);
                 Boolean check1= checker.find();
                 if(!check1){//Si no hace match con el regex de instrucción
-                    System.out.println("Entre "+linea);
                     if(linea.contains(" ")){//Checar si es una etiqueta
                         String [] fragmentarlinea= linea.split(" ");
                         if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")||(fragmentarlinea[0].toLowerCase().equals("reset")&&fragmentarlinea[1].toLowerCase().equals("fcb"))){

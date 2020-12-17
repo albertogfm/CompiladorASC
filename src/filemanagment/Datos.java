@@ -26,9 +26,8 @@ public class Datos {
     }
     
     void SetSplits(String instruccion, Queue <String> etiqueta,ArrayList<String> etiquetas,int linea){ //Generar el dato correctamente
-        System.out.println("Linea "+instruccion);
-        String k = ""; 
-        Pattern TagorCons = Pattern.compile("^(([A-Za-z_0-9]+))$"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
+        String k = "", G="";
+        Pattern TagorCons = Pattern.compile("^(([A-Za-z_]+[0-9]*))$"); //Esta expresión regular nos ayudará a revisar si los operandos son identificadores de constantes,variables,etiquetas o si se trata de algun valor numerico en hexadecimal o decimal.            
         Matcher checker;
         String ind;
         int ascii;
@@ -236,6 +235,7 @@ public class Datos {
                                 this.operandos.add(parts[1]);
                             }
                             else{
+                                System.out.println(parts[1]);
                                 if(parts[0].toLowerCase().equals("ldx")){
                                     if(parts[1].charAt(0)=='#')
                                         if(parts[1].charAt(1)=='$'){
@@ -247,11 +247,12 @@ public class Datos {
                                         }
                                     
                                 }
-                                    
                                 if(parts[1].substring(1).length() == 2 || parts[1].substring(2).length()== 2 )
                                     this.contador+=1;
-                                else
+                                else{
                                     this.contador+=2;
+                                    
+                                }    
                                 this.operandos.add(parts[1]);  
                             }
                         }

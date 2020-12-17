@@ -39,6 +39,7 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             imprimirArray();
+            initEtiq();
             //imprimirArrayLST();
             //imprimirEtiquetas();
             file.opCodesFile = this.compilacion;
@@ -90,7 +91,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -115,7 +116,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -495,6 +496,15 @@ public class CompiladorASC {
         linea =builder.toString();
         
         return linea;
+    }
+    public void initEtiq(){
+        Datos dato=null;
+        for(int i=0;i<datos2.size();i++){
+            if(datos2.get(i).etiqueta!=null)
+                dato=datos2.get(i);
+                fileASC.EtiquetaLocalidad.put(dato.etiqueta,dato.localidad);
+        }
+    
     }
     
 }

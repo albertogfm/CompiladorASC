@@ -24,6 +24,7 @@ public class FileMan extends JFrame{
     //Atributos Estáticos
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
+    public static HashMap<String,String> EtiquetaLocalidad = new HashMap<>();
     public static Queue <String> poolOfConstAndVar = new LinkedList<>();
     public static ArrayList <ErrorASC> errores = new ArrayList<>();
     public static int endInLine;

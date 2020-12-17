@@ -242,6 +242,20 @@ public class FileMan extends JFrame{
                          case 5:
                             break;
                          case 6:// reset
+                            try{
+                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                    bw.append(" ");
+                                bw.append(String.valueOf(i+1)+"|"+lastDir+" ");
+                                //
+                                Datos data = datosQ.poll();
+                                bw.append(data.operandos.get(0).substring(1));
+                                bw.append(data.operandos.get(1).substring(1));
+                                bw.append("                    ");//4 tabs
+                                bw.append(lineaToPrint);
+                                bw.newLine();
+                            }catch(NullPointerException e){
+                                System.out.println(e.getMessage());
+                            }
                             break;
                      }
                  }

@@ -21,19 +21,21 @@ import compiladorasc.CompiladorASC;
 import java.util.Collections;
 
 public class FileMan extends JFrame{
-    //Atributos
-    public ArrayList<String> lineasArchivoASC = new ArrayList<>();
-    public ArrayList<String> opCodesFile = new ArrayList<>();
+    //Atributos Estáticos
     public static Queue <Datos> instrucciones = new LinkedList<>();
     public static HashMap<String,String> constantesYvariables = new HashMap<>();
     public static Queue <String> poolOfConstAndVar = new LinkedList<>();
     public static ArrayList <ErrorASC> errores = new ArrayList<>();
-    public String fileName;
-    public String dirToWrite;
     public static int endInLine;
     public static ArrayList<Integer> firstOrg = new ArrayList<>();
-    //Functions
-    public boolean leerArchivo(String nombreAr) { //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
+    //Atributos
+    public ArrayList<String> lineasArchivoASC = new ArrayList<>();
+    public ArrayList<String> opCodesFile = new ArrayList<>();
+    public String fileName;
+    public String dirToWrite;
+    //Funciones
+    //Lee el archivo que fue selecionado y le asigna el contenido de este al ArrayList lineasArchivoASC
+    public boolean leerArchivo(String nombreAr) { 
         File file = new File(nombreAr);
         if(!file.exists()){
                 System.out.println("\tNo se encontró el archivo");
@@ -55,6 +57,7 @@ public class FileMan extends JFrame{
         }
         return true;
     }
+    //Este es el método que hace la escritura del archivo S19 con formato pedido
     public void escribirArchivoS19(){
         try {
             File file = new File(this.fileName+".S19");
@@ -64,7 +67,6 @@ public class FileMan extends JFrame{
             FileWriter fw = new FileWriter(file,false);
             BufferedWriter bw = new BufferedWriter(fw);
             int localidadStart = 8000;
-            
             int numLinAppend = this.opCodesFile.size()/15;
             int resto = this.opCodesFile.size()%15;
             int contador = 0;
@@ -89,43 +91,44 @@ public class FileMan extends JFrame{
             e.printStackTrace();
         }
     }
+    //Este es el método que hace la escritura del archivo LST
     public void escribirArchivoLST(ArrayList<Datos> datos){   
         Queue<Datos> datosQ = new LinkedList<>();
         Queue<String> compLST = new LinkedList<>();
-        
         ArrayList<String> arrayOfVarToSort = new ArrayList<>();
-        /*for(int i=0; i<vars.size();i++){
-            arrayOfVarToSort.add(vars.poll());
-        }
-       */
-        for(int i=0; i<datos.size();i++)
-            datosQ.add(datos.get(i));
-        for(int i=0; i<CompiladorASC.compilacionLST.size();i++)
-            compLST.add(CompiladorASC.compilacionLST.get(i));
-        Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
-        Pattern espaciosBlanco = Pattern.compile("^( )*$");
-        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
-        Validador checker = new Validador();
         int contadorDeVar = FileMan.poolOfConstAndVar.size(), caso;
         String linea = "";
         String lastDir="";
         int contadorOrgs=FileMan.firstOrg.size(),h=0,contadorDatos=0;
+        
+        Validador checker = new Validador();
+        //Vaciado de Listas
+        for(int i=0; i<datos.size();i++)
+            datosQ.add(datos.get(i));
+        for(int i=0; i<CompiladorASC.compilacionLST.size();i++)
+            compLST.add(CompiladorASC.compilacionLST.get(i));
+        //Patterns a Buscar
+        Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
+        Pattern espaciosBlanco = Pattern.compile("^( )*$");
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");
+       
         //Validador val = new Validador();
-         try {
-             File file = new File(this.fileName+".LTS");
-             if (!file.exists()) {
-                 file.createNewFile();
-             }
-             FileWriter fw = new FileWriter(file, false);
-             BufferedWriter bw = new BufferedWriter(fw);
-             int maxString =String.valueOf(this.lineasArchivoASC.size()).length();
-             System.out.println("el:"+ maxString);
-             for(int i=0; i< this.lineasArchivoASC.size() ; i++){
+        try {
+            File file = new File(this.fileName+".LTS");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            int maxString =String.valueOf(this.lineasArchivoASC.size()).length();
+            System.out.println("el:"+ maxString);
+            for(int i=0; i< this.lineasArchivoASC.size() ; i++){
                 linea = this.lineasArchivoASC.get(i);
                 String lineaToPrint = linea;
                 Matcher onlycomentario = comentariosUnicamente.matcher(linea);
                 Matcher espacios = espaciosBlanco.matcher(linea);
-                if(espacios.find() || onlycomentario.find()){
+                
+                if(espacios.find() || onlycomentario.find()){ //Caso de que la linea es espacio en blanco o solo un comentario
                     System.out.println("eu:"+String.valueOf(i+1).length());
                     for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                         bw.append(" ");
@@ -133,7 +136,7 @@ public class FileMan extends JFrame{
                     bw.append("                    ");
                     bw.append(lineaToPrint);
                     bw.newLine();                     
-                }else{
+                }else{ //Separador de  casos
                     Matcher comentario = comentarios.matcher(linea);
                     if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
                         String[] parts = linea.split("\\*");
@@ -200,7 +203,7 @@ public class FileMan extends JFrame{
 
                                         while(!compLST.peek().startsWith("-"))
                                             bw.append(" "+compLST.poll());
-                                            contadorTabs++;
+                                        contadorTabs++;
 
                                     }else{
                                         contadorTabs =(contadorTabs*2)+1;
@@ -243,11 +246,12 @@ public class FileMan extends JFrame{
                  }
                  //bw.newLine();
             }
-             Collections.sort(arrayOfVarToSort);
-             if(arrayOfVarToSort.size() > 0){
+            //SyMBOL table
+            Collections.sort(arrayOfVarToSort);
+            if(arrayOfVarToSort.size() > 0){//Caso De Mas de UnA Variable
                 bw.append("SYMBOL TABLE:  Total Entries=   "+arrayOfVarToSort.size());
                 bw.newLine();
-                if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables vares
+                if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables pares
                     int izquierda = 0, derecha= arrayOfVarToSort.size()/2;
                     for(int j=0; j<arrayOfVarToSort.size()/2;j++){
                         String var1 = arrayOfVarToSort.get(izquierda);
@@ -265,13 +269,13 @@ public class FileMan extends JFrame{
                         derecha++;
                     }
                 }else{
-                    if(arrayOfVarToSort.size() == 1){
+                    if(arrayOfVarToSort.size() == 1){//Caso de una sola variable
                         String var = arrayOfVarToSort.get(0);
                         bw.append(var);
                         for(int i=0; i< 20- var.length(); i++)
                                 bw.append(" ");
                         bw.append(FileMan.constantesYvariables.get(var).substring(1)+"    ");
-                    }else{
+                    }else{//Caso de 3 o Mas Variables impartes
                         int izquierda = 0, derecha= (arrayOfVarToSort.size()+1)/2;
                         for(int j=0; j<(arrayOfVarToSort.size()-1)/2;j++){
                             String var1 = arrayOfVarToSort.get(izquierda);

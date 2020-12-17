@@ -114,7 +114,7 @@ public class FileMan extends JFrame{
        
         //Validador val = new Validador();
         try {
-            File file = new File(this.fileName+".LTS");
+            File file = new File(this.fileName+".LST");
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -129,7 +129,7 @@ public class FileMan extends JFrame{
                 Matcher espacios = espaciosBlanco.matcher(linea);
                 
                 if(espacios.find() || onlycomentario.find()){ //Caso de que la linea es espacio en blanco o solo un comentario
-                    System.out.println("eu:"+String.valueOf(i+1).length());
+                    //System.out.println("eu:"+String.valueOf(i+1).length());
                     for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                         bw.append(" ");
                     bw.append(String.valueOf(i+1)+"|");
@@ -166,7 +166,7 @@ public class FileMan extends JFrame{
                             while(linea.endsWith(" ")){
                                 linea=linea.substring(0,linea.length()-1);
                             }
-                            System.out.println(linea);
+                            //System.out.println(linea);
                             String[] org = linea.split(" ");
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");

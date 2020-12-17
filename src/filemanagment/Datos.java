@@ -49,7 +49,7 @@ public class Datos {
                     this.contador+=1;
             }
             else{//Si el mnemonico no es valido se generará el error tipo 4
-                file.errores.add(new ErrorASC(4,linea));
+                file.errores.add(new ErrorASC(4,linea-1));
             }
         }
         
@@ -155,7 +155,6 @@ public class Datos {
                                     if(valor.substring(1, 3).equals("00")){
                                         if(checkDIR(parts[0])){
                                             valor="$"+valor.substring(3);
-                                            System.out.println(parts[0]+" "+valor);
                                         }
                                     }
                                     if((valor.length()==3))
@@ -208,7 +207,6 @@ public class Datos {
                             this.localidad = SetLocalidad(contador);
                             if(parts[1].contains("’")){
                                 if(parts[1].charAt(0)=='#'){
-                                    System.out.println(parts[1].charAt(2));
                                     character = parts[1].charAt(2);
                                     ascii = (int)character;
                                     this.direccionamiento="imm";
@@ -235,7 +233,6 @@ public class Datos {
                                 this.operandos.add(parts[1]);
                             }
                             else{
-                                System.out.println(parts[1]);
                                 if(parts[0].toLowerCase().equals("ldx")){
                                     if(parts[1].charAt(0)=='#')
                                         if(parts[1].charAt(1)=='$'){
@@ -324,7 +321,7 @@ public class Datos {
         System.out.println("OpCode: "+this.opcode);
         System.out.println("Localidad: "+this.localidad);
         if(this.etiqueta!=null)
-            System.out.println("Etiqueta: "+this.etiqueta); 
+            System.out.println("Etiqueta:"+this.etiqueta); 
     }
     public String SetLocalidad(int localidad){
         String localHex;

@@ -38,8 +38,9 @@ public class CompiladorASC {
         if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            //imprimirArray();
+            imprimirArray();
             //imprimirArrayLST();
+            //imprimirEtiquetas();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -95,6 +96,9 @@ public class CompiladorASC {
                     }
                 break;
             case 3://Etiquetas
+                while(linea.endsWith(" ")){
+                    linea=linea.substring(0,linea.length()-1);
+                }
                 etiqueta.add(linea);
                 //etiquetas.add(linea);
                 break;
@@ -166,11 +170,11 @@ public class CompiladorASC {
                             buscador=element.operandos.get(i);
                             if(datos2.get(j).etiqueta!=null){
                                 if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
-                                compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
-                                compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
-                                compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
-                                compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
-                                break;
+                                    compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                    compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
+                                    compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                    compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
+                                    break;
                                 }
                             }     
                         }
@@ -178,6 +182,7 @@ public class CompiladorASC {
                     }
                     if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
                         buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
+                            //System.out.println(fileASC.constantesYvariables.get(element.operandos.get(i)));
                             if(buscador.length() <= 2){
                                 compilacion.add(buscador.toUpperCase());
                                 compilacionLST.add(buscador.toUpperCase());
@@ -295,6 +300,11 @@ public class CompiladorASC {
             System.out.println(compilacionLST.get(i));
     }
 
+    public void imprimirEtiquetas(){
+        for(int i=0;i<etiquetas.size();i++)
+            System.out.println(etiquetas.get(i));
+    }
+    
 
     public void SecondCheck(FileMan file){//Segunda pasada  
         int i, dif1,dif2,newBin,decimal=0,n=0,j,x, index=0,nuevaLoc; 
@@ -445,8 +455,9 @@ public class CompiladorASC {
                     else{
                         Matcher com=comentariosUnicamente.matcher(linea);
                         Boolean ban = com.find();
-                        if(!ban)
+                        if(!ban){
                             etiquetas.add(linea);
+                        }
                     }    
                 }            
             } 

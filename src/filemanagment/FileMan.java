@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import regex.Validador;
 import compiladorasc.CompiladorASC;
+import java.util.Collections;
 
 public class FileMan extends JFrame{
     //Atributos
@@ -91,11 +92,16 @@ public class FileMan extends JFrame{
     public void escribirArchivoLST(ArrayList<Datos> datos){   
         Queue<Datos> datosQ = new LinkedList<>();
         Queue<String> compLST = new LinkedList<>();
+        /*Queue<String> vars = FileMan.poolOfConstAndVar;
+        ArrayList<String> arrayOfVarToSort = new ArrayList<>();
+        for(int i=0; i<vars.size();i++){
+            arrayOfVarToSort.add(vars.poll());
+        }
+       Collections.sort(arrayOfVarToSort);*/
         for(int i=0; i<datos.size();i++)
             datosQ.add(datos.get(i));
         for(int i=0; i<CompiladorASC.compilacionLST.size();i++)
             compLST.add(CompiladorASC.compilacionLST.get(i));
-
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         Pattern espaciosBlanco = Pattern.compile("^( )*$");
         Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
@@ -235,11 +241,64 @@ public class FileMan extends JFrame{
                      }
                  }
                  //bw.newLine();
-             }
-             bw.close();
-         } catch (Exception e) {
-             e.printStackTrace();
-         }
+            }/*
+             if(arrayOfVarToSort.size() > 0){
+                bw.append("SYMBOL TABLE:  Total Entries=   "+arrayOfVarToSort.size());
+                if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables vares
+                    int izquierda = 0, derecha= arrayOfVarToSort.size()/2;
+                    for(int j=0; j<arrayOfVarToSort.size()/2;j++){
+                        String var1 = arrayOfVarToSort.get(izquierda);
+                        String var2 = arrayOfVarToSort.get(derecha);
+                        bw.append(var1);
+                        for(int i=0; i< 20- var1.length(); i++)
+                            bw.append(" ");
+                        bw.append(FileMan.constantesYvariables.get(var1)+"    ");
+                        bw.append(var2);
+                        for(int i=0; i< 20- var2.length(); i++)
+                            bw.append(" ");
+                        bw.newLine();
+                        izquierda++;
+                        derecha++;
+                    }
+                }else{
+                    if(arrayOfVarToSort.size() == 1){
+                        String var = arrayOfVarToSort.get(0);
+                        bw.append(var);
+                        for(int i=0; i< 20- var.length(); i++)
+                                bw.append(" ");
+                        bw.append(FileMan.constantesYvariables.get(var)+"    ");
+                    }else{
+                        int izquierda = 0, derecha= (arrayOfVarToSort.size()+1)/2;
+                        for(int j=0; j<(arrayOfVarToSort.size()-1)/2;j++){
+                            String var1 = arrayOfVarToSort.get(izquierda);
+                            String var2 = arrayOfVarToSort.get(derecha);
+                            bw.append(var1);
+                            for(int i=0; i< 20- var1.length(); i++)
+                                bw.append(" ");
+                            bw.append(FileMan.constantesYvariables.get(var1)+"    ");
+                            bw.append(var2);
+                            for(int i=0; i< 20- var2.length(); i++)
+                                bw.append(" ");
+                            bw.newLine();
+                            izquierda++;
+                            derecha++;
+                        }
+                        String var1 = arrayOfVarToSort.get(izquierda);
+                        bw.append(var1);
+                        for(int i=0; i< 20- var1.length(); i++)
+                            bw.append(" ");
+                        bw.append(FileMan.constantesYvariables.get(var1)+"    ");
+                    }    
+                }
+            }
+            bw.newLine();
+            bw.newLine();
+            bw.append("Total errors: 0");*/
+            bw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
         }
     public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");

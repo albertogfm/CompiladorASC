@@ -39,7 +39,7 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             //imprimirArray();
-            imprimirArrayLST();
+            //imprimirArrayLST();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -89,7 +89,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        dato.ImprimirDatos();
+                        //dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -111,7 +111,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        dato.ImprimirDatos();
+                        //dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }

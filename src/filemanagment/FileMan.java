@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import regex.Validador;
+import compiladorasc.CompiladorASC;
 
 public class FileMan extends JFrame{
     //Atributos
@@ -87,124 +88,160 @@ public class FileMan extends JFrame{
             e.printStackTrace();
         }
     }
-   	public void escribirArchivoLST(ArrayList<Datos> datos){   
-            Queue<Datos> datosQ = new LinkedList<>();
-            for(int i=0; i<datos.size();i++)
-                datosQ.add(datos.get(i));
-            Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
-            Pattern espaciosBlanco = Pattern.compile("^( )*$");
-            Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
-            Validador checker = new Validador();
-            int contadorDeVar = FileMan.poolOfConstAndVar.size(), caso;
-            String linea = "";
-            String lastDir="";
-            int contadorOrgs=FileMan.firstOrg.size(),h=0,contadorDatos=0;
-            //Validador val = new Validador();
-            try {
-                File file = new File(this.fileName+".LTS");
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                FileWriter fw = new FileWriter(file, false);
-                BufferedWriter bw = new BufferedWriter(fw);
-                int maxString =String.valueOf(this.lineasArchivoASC.size()).length();
-                System.out.println("el:"+ maxString);
-                for(int i=0; i< this.lineasArchivoASC.size() ; i++){
-                    linea = this.lineasArchivoASC.get(i);
-                    String lineaToPrint = linea;
-                    Matcher onlycomentario = comentariosUnicamente.matcher(linea);
-                    Matcher espacios = espaciosBlanco.matcher(linea);
-                    if(espacios.find() || onlycomentario.find()){
-                        System.out.println("eu:"+String.valueOf(i+1).length());
-                        for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                            bw.append(" ");
-                        bw.append(String.valueOf(i+1)+"|"+linea );
-                        bw.newLine();                     
-                    }else{
-                        Matcher comentario = comentarios.matcher(linea);
-                        if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
-                            String[] parts = linea.split("\\*");
-                            linea=parts[0];
-                        }
-                        caso = checker.Reconoce(linea,i);
-                        int contaSpaces=0;
-                        
-                        switch(caso){
-                            case 1://constantes y var
-                                String varToFind = FileMan.poolOfConstAndVar.poll();
-                                String valorVar =FileMan.constantesYvariables.get(varToFind);
-                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                                    bw.append(" ");
-                                bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1)+"|"+lineaToPrint );
+    public void escribirArchivoLST(ArrayList<Datos> datos){   
+        Queue<Datos> datosQ = new LinkedList<>();
+        Queue<String> compLST = new LinkedList<>();
+        for(int i=0; i<datos.size();i++)
+            datosQ.add(datos.get(i));
+        for(int i=0; i<CompiladorASC.compilacionLST.size();i++)
+            compLST.add(CompiladorASC.compilacionLST.get(i));
+
+        Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
+        Pattern espaciosBlanco = Pattern.compile("^( )*$");
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
+        Validador checker = new Validador();
+        int contadorDeVar = FileMan.poolOfConstAndVar.size(), caso;
+        String linea = "";
+        String lastDir="";
+        int contadorOrgs=FileMan.firstOrg.size(),h=0,contadorDatos=0;
+        //Validador val = new Validador();
+         try {
+             File file = new File(this.fileName+".LTS");
+             if (!file.exists()) {
+                 file.createNewFile();
+             }
+             FileWriter fw = new FileWriter(file, false);
+             BufferedWriter bw = new BufferedWriter(fw);
+             int maxString =String.valueOf(this.lineasArchivoASC.size()).length();
+             System.out.println("el:"+ maxString);
+             for(int i=0; i< this.lineasArchivoASC.size() ; i++){
+                linea = this.lineasArchivoASC.get(i);
+                String lineaToPrint = linea;
+                Matcher onlycomentario = comentariosUnicamente.matcher(linea);
+                Matcher espacios = espaciosBlanco.matcher(linea);
+                if(espacios.find() || onlycomentario.find()){
+                    System.out.println("eu:"+String.valueOf(i+1).length());
+                    for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                        bw.append(" ");
+                    bw.append(String.valueOf(i+1)+"|");
+                    bw.append("                    ");
+                    bw.append(lineaToPrint);
+                    bw.newLine();                     
+                }else{
+                    Matcher comentario = comentarios.matcher(linea);
+                    if(comentario.find()){//Ignora el comentario y se queda con la linea de instrucciones
+                        String[] parts = linea.split("\\*");
+                        linea=parts[0];
+                    }
+                    caso = checker.Reconoce(linea,i);
+                    int contaSpaces=0;
+                    linea = checker.deleteSpacesIntermedium(linea);
+                    switch(caso){
+                        case 1://Caso de imprimir constantes y variables
+                            String varToFind = FileMan.poolOfConstAndVar.poll();
+                            String valorVar =FileMan.constantesYvariables.get(varToFind);
+                            for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                bw.append(" ");
+                            bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1));
+                            bw.append("                    ");//4 tabs
+                            bw.append(lineaToPrint);
+                            bw.newLine();
+                            
+                            break;
+                        case 2:// instruccion
+                            int contadorTabs = 0;
+                            while(linea.startsWith(" ")){
+                                linea=linea.substring(1);
+                            }
+                            while(linea.endsWith(" ")){
+                                linea=linea.substring(0,linea.length()-1);
+                            }
+                            System.out.println(linea);
+                            String[] org = linea.split(" ");
+                            for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                bw.append(" ");
+                            if(org[0].equals("ORG")|| org[0].equals("org")){
+                                System.out.println("--"+org[1]);
+                                bw.append(String.valueOf(i+1)+"|"+org[1].substring(1));
+                                bw.append("                    ");//4 tabs
+                                bw.append(lineaToPrint);
                                 bw.newLine();
-                                break;
-                            case 2:// instruccion
-                                while(linea.startsWith(" ")){
-                                    linea=linea.substring(1);
-                                }
-                                while(linea.endsWith(" ")){
-                                    linea=linea.substring(0,linea.length()-1);
-                                }
-                                String[] org = linea.split(" ");
-                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                                    bw.append(" ");
-                                if(org[0].equals("ORG")|| org[0].equals("org")){
-                                    bw.append(String.valueOf(i+1)+"|"+org[1].substring(1)+"|"+ lineaToPrint);
-                                    bw.newLine();
-                                    lastDir=org[1];
-                                }else{
+                                lastDir=org[1];
+                            }else{
+                                try{
                                     Datos data = datosQ.poll();
                                     lastDir = data.localidad;
-                                    bw.append(String.valueOf(i+1)+"|"+data.localidad+"|"+data.opcode);
-                                    if(!data.direccionamiento.equals("inh")){
-                                        System.out.println((i+1) +"|"+ data.operandos.size());
-                                        for(int j = 0 ; j< data.operandos.size(); j++){
-                                            String op = data.operandos.get(j);
-                                            if(op.contains("#")){
-                                                String[] separar = op.split("#");
-                                                op = separar[1];
-                                            }
-                                            if(op.contains("$")){
-                                                String[] separar = op.split("\\$");
-                                                op = separar[1];
-                                            }
-                                            bw.append(" "+op);
-                                        }
+                                    bw.append(String.valueOf(i+1)+"|"+data.localidad+"|");
+
+
+                                    if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
+                                        String opcode = compLST.poll();
+                                        opcode = opcode.substring(1, 3);
+                                        bw.append( opcode );
+                                        contadorTabs++;
+                                    }else{
+                                        String opcode = compLST.poll();
+                                        opcode = opcode.substring(1);
+                                        bw.append(opcode +" ");
+                                        contadorTabs++;
+                                        opcode = compLST.poll();
+                                        opcode = opcode.substring(0,2);
+                                        bw.append(opcode);
+                                        contadorTabs++;
                                     }
-                                    bw.append("|"+lineaToPrint);
+                                    if(!data.direccionamiento.equals("inh")){
+
+                                        while(!compLST.peek().startsWith("-"))
+                                            bw.append(" "+compLST.poll());
+                                            contadorTabs++;
+
+                                    }else{
+                                        contadorTabs =(contadorTabs*2)+1;
+                                        for(int y=0 ; y<16-contadorTabs ; y++)
+                                            bw.append(" ");
+                                    }
+                                    
+                                }catch (NullPointerException e){
+                                        
+                                }
+                                bw.append("\t\t\t\t"+lineaToPrint);
                                     bw.newLine();
-                                }
-                                break;
-                            case 3://etiqueta
-                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                                    bw.append(" ");
-                                if(lastDir.contains("$")){
-                                    String[] separar = lastDir.split("\\$");
-                                    lastDir = separar[1];
-                                }
-                                bw.append(String.valueOf(i+1)+"|"+lastDir+"|"+lineaToPrint);
-                                bw.newLine();
-                                break;
-                            case 4:// ende
-                                for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                                    bw.append(" ");
-                                bw.append(String.valueOf(i+1)+"|"+lastDir+"|"+lineaToPrint);
-                                bw.newLine();
-                                break;
-                            case 5:
-                                break;
-                            case 6:// reset
-                                break;
-                        }
-                    }
-                    //bw.newLine();
-                }
-                bw.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                             }
+                             break;
+                         case 3://etiqueta
+                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                 bw.append(" ");
+                             if(lastDir.contains("$")){
+                                 String[] separar = lastDir.split("\\$");
+                                 lastDir = separar[1];
+                             }
+                             bw.append(String.valueOf(i+1)+"|"+lastDir);
+                             bw.append("                    ");//4 tabs
+                                bw.append(lineaToPrint);
+                             bw.newLine();
+                             break;
+                         case 4:// ende
+                            for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                bw.append(" ");
+                            bw.append(String.valueOf(i+1)+"|"+lastDir);
+                            bw.append("                    ");//4 tabs
+                            bw.append(lineaToPrint);
+                            bw.newLine();
+                            break;
+                         case 5:
+                            break;
+                         case 6:// reset
+                            break;
+                     }
+                 }
+                 //bw.newLine();
+             }
+             bw.close();
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
         }
-     public String readOpcodes(String nemon, String modo) {
+    public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");
         if(!file.exists()){
                 System.out.println("\tNo se encontró el archivo");

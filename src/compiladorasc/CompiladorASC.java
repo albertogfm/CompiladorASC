@@ -500,9 +500,10 @@ public class CompiladorASC {
     public void initEtiq(){
         Datos dato=null;
         for(int i=0;i<datos2.size();i++){
-            if(datos2.get(i).etiqueta!=null)
+            if(datos2.get(i).etiqueta!=null){
                 dato=datos2.get(i);
                 fileASC.EtiquetaLocalidad.put(dato.etiqueta,dato.localidad);
+            }
         }
     
     }

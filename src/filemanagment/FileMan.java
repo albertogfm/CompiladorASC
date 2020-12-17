@@ -92,12 +92,12 @@ public class FileMan extends JFrame{
     public void escribirArchivoLST(ArrayList<Datos> datos){   
         Queue<Datos> datosQ = new LinkedList<>();
         Queue<String> compLST = new LinkedList<>();
-        /*Queue<String> vars = FileMan.poolOfConstAndVar;
+        
         ArrayList<String> arrayOfVarToSort = new ArrayList<>();
-        for(int i=0; i<vars.size();i++){
+        /*for(int i=0; i<vars.size();i++){
             arrayOfVarToSort.add(vars.poll());
         }
-       Collections.sort(arrayOfVarToSort);*/
+       */
         for(int i=0; i<datos.size();i++)
             datosQ.add(datos.get(i));
         for(int i=0; i<CompiladorASC.compilacionLST.size();i++)
@@ -145,6 +145,7 @@ public class FileMan extends JFrame{
                     switch(caso){
                         case 1://Caso de imprimir constantes y variables
                             String varToFind = FileMan.poolOfConstAndVar.poll();
+                            arrayOfVarToSort.add(varToFind);
                             String valorVar =FileMan.constantesYvariables.get(varToFind);
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
@@ -241,9 +242,11 @@ public class FileMan extends JFrame{
                      }
                  }
                  //bw.newLine();
-            }/*
+            }
+             Collections.sort(arrayOfVarToSort);
              if(arrayOfVarToSort.size() > 0){
                 bw.append("SYMBOL TABLE:  Total Entries=   "+arrayOfVarToSort.size());
+                bw.newLine();
                 if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables vares
                     int izquierda = 0, derecha= arrayOfVarToSort.size()/2;
                     for(int j=0; j<arrayOfVarToSort.size()/2;j++){
@@ -252,10 +255,11 @@ public class FileMan extends JFrame{
                         bw.append(var1);
                         for(int i=0; i< 20- var1.length(); i++)
                             bw.append(" ");
-                        bw.append(FileMan.constantesYvariables.get(var1)+"    ");
+                        bw.append(FileMan.constantesYvariables.get(var1).substring(1)+"    ");
                         bw.append(var2);
                         for(int i=0; i< 20- var2.length(); i++)
                             bw.append(" ");
+                        bw.append(FileMan.constantesYvariables.get(var2).substring(1)+"    ");
                         bw.newLine();
                         izquierda++;
                         derecha++;
@@ -266,7 +270,7 @@ public class FileMan extends JFrame{
                         bw.append(var);
                         for(int i=0; i< 20- var.length(); i++)
                                 bw.append(" ");
-                        bw.append(FileMan.constantesYvariables.get(var)+"    ");
+                        bw.append(FileMan.constantesYvariables.get(var).substring(1)+"    ");
                     }else{
                         int izquierda = 0, derecha= (arrayOfVarToSort.size()+1)/2;
                         for(int j=0; j<(arrayOfVarToSort.size()-1)/2;j++){
@@ -275,10 +279,11 @@ public class FileMan extends JFrame{
                             bw.append(var1);
                             for(int i=0; i< 20- var1.length(); i++)
                                 bw.append(" ");
-                            bw.append(FileMan.constantesYvariables.get(var1)+"    ");
+                            bw.append(FileMan.constantesYvariables.get(var1).substring(1)+"    ");
                             bw.append(var2);
                             for(int i=0; i< 20- var2.length(); i++)
                                 bw.append(" ");
+                            bw.append(FileMan.constantesYvariables.get(var2).substring(1)+"    ");
                             bw.newLine();
                             izquierda++;
                             derecha++;
@@ -293,7 +298,7 @@ public class FileMan extends JFrame{
             }
             bw.newLine();
             bw.newLine();
-            bw.append("Total errors: 0");*/
+            bw.append("Total errors: 0");
             bw.close();
             } catch (Exception e) {
                 e.printStackTrace();

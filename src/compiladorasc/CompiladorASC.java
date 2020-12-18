@@ -38,7 +38,7 @@ public class CompiladorASC {
         if(file.errores.isEmpty()){     
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            imprimirArray();
+            //imprimirArray();
             if(etiquetas.size()!=0)
                 initEtiq();
             //imprimirArrayLST();
@@ -422,7 +422,7 @@ public class CompiladorASC {
     }
 
     public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
-        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’)( ),_]*)$");
+        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’')( ),_]*)$");
         Pattern espaciosBlanco = Pattern.compile("^\\s*$");
         Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");

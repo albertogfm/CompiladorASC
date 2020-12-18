@@ -145,8 +145,11 @@ public class Datos {
                                 this.mnemonico=parts[0].toLowerCase();
                                 if(parts[1].charAt(0)=='#'){
                                     valor = file.constantesYvariables.get(parts[1].substring(1));
-                                    if(valor.substring(1, 3).equals("00"))
-                                        valor="$"+valor.substring(3);
+                                    if(valor.substring(1, 3).equals("00")){
+                                        if(parts[0].toLowerCase().equals("ldx")){}
+                                        else    
+                                            valor="$"+valor.substring(3);
+                                    }
                                     if((valor.length()==3||valor.length()==5))
                                         this.direccionamiento="imm";
                                     else{
@@ -209,14 +212,14 @@ public class Datos {
                         }                    
                         else{
                             this.localidad = SetLocalidad(contador);
-                            if(parts[1].contains("’")){
+                            if(parts[1].contains("’")||parts[1].contains("'")){
                                 if(parts[1].charAt(0)=='#'){
                                     character = parts[1].charAt(2);
                                     ascii = (int)character;
                                     this.direccionamiento="imm";
                                     this.mnemonico=parts[0].toLowerCase();
                                     this.opcode=file.readOpcodes(parts[0].toLowerCase(),"imm");
-                                    this.contador+=1;
+                                    this.contador+=2;
                                     this.operandos.add(String.valueOf(ascii));
                                     return;
                                 }    

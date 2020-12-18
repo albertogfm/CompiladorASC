@@ -209,6 +209,7 @@ public class Inicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Escoge un archivo primero","    NO HAY ARCHIVO CARGADO",2);
         }
         this.file.resetFileman();
+        CompiladorASC.resetStaticValues();
 
     }//GEN-LAST:event_compileBActionPerformed
 

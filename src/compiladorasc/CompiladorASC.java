@@ -509,6 +509,17 @@ public class CompiladorASC {
         }
     
     }
+    public static void resetStaticValues(){
+        CompiladorASC.compilacion.clear();
+        CompiladorASC.compilacionLST.clear();
+        CompiladorASC.datos2.clear();
+        CompiladorASC.saltos.clear();
+        CompiladorASC.lst.clear();
+        CompiladorASC.etiquetas.clear();
+        CompiladorASC.fileASC =  new FileMan();
+        
+        
+    }
     
 }
     

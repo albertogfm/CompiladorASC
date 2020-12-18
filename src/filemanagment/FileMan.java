@@ -153,7 +153,7 @@ public class FileMan extends JFrame{
                             String valorVar =FileMan.constantesYvariables.get(varToFind);
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
-                            bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1));
+                            bw.append(String.valueOf(i+1)+"|"+valorVar.substring(1).toUpperCase());
                             bw.append("                    ");//4 tabs
                             bw.append(lineaToPrint);
                             bw.newLine();
@@ -173,68 +173,82 @@ public class FileMan extends JFrame{
                                 bw.append(" ");
                             if(org[0].equals("ORG")|| org[0].equals("org")){
                                 System.out.println("--"+org[1]);
-                                bw.append(String.valueOf(i+1)+"|"+org[1].substring(1));
+                                bw.append(String.valueOf(i+1)+"|"+org[1].substring(1).toUpperCase());
                                 bw.append("                    ");//4 tabs
                                 bw.append(lineaToPrint);
                                 bw.newLine();
                                 lastDir=org[1];
                             }else{
-                                try{
-                                    Datos data = datosQ.poll();
+                                Datos data = datosQ.poll();
+                                if(data.opcode.equals("0")){
                                     lastDir = data.localidad;
-                                    bw.append(String.valueOf(i+1)+"|"+data.localidad+"|");
-
-
-                                    if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
-                                        String opcode = compLST.poll();
-                                        opcode = opcode.substring(1, 3);
-                                        bw.append( opcode );
-                                        contadorTabs++;
-                                    }else{
-                                        String opcode = compLST.poll();
-                                        opcode = opcode.substring(1);
-                                        bw.append(opcode +" ");
-                                        contadorTabs++;
-                                        opcode = compLST.poll();
-                                        opcode = opcode.substring(0,2);
-                                        bw.append(opcode);
-                                        contadorTabs++;
+                                    bw.append(String.valueOf(i+1)+"|"+data.localidad.toUpperCase()+"|");
+                                    for(int j=0;j<data.operandos.size();j++){
+                                        String operando = data.operandos.get(j);
+                                        if(operando.startsWith("$"))
+                                            operando=operando.substring(1);
+                                        bw.append(operando+" ");
                                     }
-                                    if(!data.direccionamiento.equals("inh")){
-
-                                        while(!compLST.peek().startsWith("-"))
-                                            bw.append(" "+compLST.poll());
-                                        contadorTabs++;
-
-                                    }else{
-                                        contadorTabs =(contadorTabs*2)+1;
-                                        for(int y=0 ; y<16-contadorTabs ; y++)
-                                            bw.append(" ");
-                                    }
-                                    
-                                }catch (NullPointerException e){
-                                        
-                                }
-                                bw.append("\t\t\t\t"+lineaToPrint);
+                                    bw.append("\t\t\t   "+lineaToPrint);
                                     bw.newLine();
+                                }else{
+                                    try{
+                                        
+                                        lastDir = data.localidad;
+                                        bw.append(String.valueOf(i+1)+"|"+data.localidad.toUpperCase()+"|");
+                                        if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
+                                            String opcode = compLST.poll();
+                                            opcode = opcode.substring(1, 3);
+                                            bw.append( opcode );
+                                            contadorTabs++;
+                                        }else{
+                                            String opcode = compLST.poll();
+                                            opcode = opcode.substring(1);
+                                            bw.append(opcode +" ");
+                                            contadorTabs++;
+                                            opcode = compLST.poll();
+                                            opcode = opcode.substring(0,2);
+                                            bw.append(opcode);
+                                            contadorTabs++;
+                                        }
+                                        if(!data.direccionamiento.equals("inh")){
+
+                                            while(!compLST.peek().startsWith("-"))
+                                                bw.append(" "+compLST.poll());
+                                            contadorTabs++;
+
+                                        }else{
+                                            contadorTabs =(contadorTabs*2)+1;
+                                            for(int y=0 ; y<16-contadorTabs ; y++)
+                                                bw.append(" ");
+                                        }
+
+                                    }catch (NullPointerException e){
+
+                                    }
+                                    bw.append("\t\t\t\t"+lineaToPrint);
+                                    bw.newLine();
+                                }    
                              }
                              break;
-                         case 3://etiqueta
-                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
-                                 bw.append(" ");
-                             if(lastDir.contains("$")){
-                                 String[] separar = lastDir.split("\\$");
-                                 lastDir = separar[1];
-                             }
-                             bw.append(String.valueOf(i+1)+"|"+lastDir);
-                             bw.append("                    ");//4 tabs
-                                bw.append(lineaToPrint);
-                             bw.newLine();
-                             break;
-                         case 4:// ende
+                        case 3://etiqueta
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
+                            if(lastDir.contains("$")){
+                                String[] separar = lastDir.split("\\$");
+                                lastDir = separar[1];
+                            }
                             bw.append(String.valueOf(i+1)+"|"+lastDir);
+                            bw.append("                    ");//4 tabs
+                               bw.append(lineaToPrint);
+                            bw.newLine();
+                            break;
+                        case 4:// end
+                            for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
+                                bw.append(" ");
+                            if(lastDir.startsWith("$"))
+                                lastDir = lastDir.substring(1);
+                            bw.append(String.valueOf(i+1)+"|"+lastDir.toUpperCase());
                             bw.append("                    ");//4 tabs
                             bw.append(lineaToPrint);
                             bw.newLine();
@@ -245,6 +259,8 @@ public class FileMan extends JFrame{
                             try{
                                 for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                     bw.append(" ");
+                                if(lastDir.startsWith("$"))
+                                    lastDir = lastDir.substring(1);
                                 bw.append(String.valueOf(i+1)+"|"+lastDir+" ");
                                 //
                                 Datos data = datosQ.poll();
@@ -265,8 +281,13 @@ public class FileMan extends JFrame{
             for(int i=0; i < CompiladorASC.etiquetas.size();i++){
                 arrayOfVarToSort.add(CompiladorASC.etiquetas.get(i));
             }
+            
             Collections.sort(arrayOfVarToSort);
+            for(int i=0;i< arrayOfVarToSort.size();i++){
+                System.out.println(arrayOfVarToSort.get(i));
+            }
             if(arrayOfVarToSort.size() > 0){//Caso De Mas de UnA Variable
+                bw.newLine();
                 bw.append("SYMBOL TABLE:  Total Entries=   "+arrayOfVarToSort.size());
                 bw.newLine();
                 if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables pares
@@ -277,23 +298,27 @@ public class FileMan extends JFrame{
                         bw.append(var1);
                         for(int i=0; i< 20- var1.length(); i++)
                             bw.append(" ");
-                        String valorDirLista1 = FileMan.constantesYvariables.get(var1);
-                        String valorDirLista2 = FileMan.constantesYvariables.get(var2);
-                        if( valorDirLista1 == null){
+                        String valorDirLista1, valorDirLista2;
+                        if( FileMan.constantesYvariables.containsKey(var1)){
+                            valorDirLista1 = FileMan.constantesYvariables.get(var1);
+                        }else{
                             valorDirLista1 = FileMan.EtiquetaLocalidad.get(var1);
                         }
-                        if( valorDirLista2 == null){
-                            valorDirLista2 = FileMan.EtiquetaLocalidad.get(var1);
+                        if( FileMan.constantesYvariables.containsKey(var2)){
+                            valorDirLista2 = FileMan.constantesYvariables.get(var2);
+                        }else{
+                            valorDirLista2 = FileMan.EtiquetaLocalidad.get(var2);
                         }
+                        
                         if(valorDirLista1.startsWith("$"))
                             valorDirLista1 = valorDirLista1.substring(1);
                         if(valorDirLista2.startsWith("$"))
                             valorDirLista2 = valorDirLista2.substring(1);
-                        bw.append(valorDirLista1+"    ");
+                        bw.append(valorDirLista1.toUpperCase()+"    ");
                         bw.append(var2);
                         for(int i=0; i< 20- var2.length(); i++)
                             bw.append(" ");
-                        bw.append(valorDirLista2+"    ");
+                        bw.append(valorDirLista2.toUpperCase()+"    ");
                         bw.newLine();
                         izquierda++;
                         derecha++;
@@ -302,15 +327,17 @@ public class FileMan extends JFrame{
                     if(arrayOfVarToSort.size() == 1){//Caso de una sola variable
                         String var = arrayOfVarToSort.get(0);
                         bw.append(var);
-                        String valorDirLista1 = FileMan.constantesYvariables.get(var);
-                        if( valorDirLista1 == null){
+                        String valorDirLista1;
+                        if( FileMan.constantesYvariables.containsKey(var)){
+                            valorDirLista1 = FileMan.constantesYvariables.get(var);
+                        }else{
                             valorDirLista1 = FileMan.EtiquetaLocalidad.get(var);
                         }
                         if(valorDirLista1.startsWith("$"))
                             valorDirLista1 = valorDirLista1.substring(1);
                         for(int i=0; i< 20- var.length(); i++)
                                 bw.append(" ");
-                        bw.append(valorDirLista1+"    ");
+                        bw.append(valorDirLista1.toUpperCase()+"    ");
                     }else{//Caso de 3 o Mas Variables impartes
                         int izquierda = 0, derecha= (arrayOfVarToSort.size()+1)/2;
                         for(int j=0; j<(arrayOfVarToSort.size()-1)/2;j++){
@@ -319,23 +346,26 @@ public class FileMan extends JFrame{
                             bw.append(var1);
                             for(int i=0; i< 20- var1.length(); i++)
                                 bw.append(" ");
-                            String valorDirLista1 = FileMan.constantesYvariables.get(var1);
-                            String valorDirLista2 = FileMan.constantesYvariables.get(var2);
-                            if( valorDirLista1 == null){
+                            String valorDirLista1, valorDirLista2;
+                            if( FileMan.constantesYvariables.containsKey(var1)){
+                                valorDirLista1 = FileMan.constantesYvariables.get(var1);
+                            }else{
                                 valorDirLista1 = FileMan.EtiquetaLocalidad.get(var1);
                             }
-                            if( valorDirLista2 == null){
-                                valorDirLista2 = FileMan.EtiquetaLocalidad.get(var1);
+                            if( FileMan.constantesYvariables.containsKey(var2)){
+                                valorDirLista2 = FileMan.constantesYvariables.get(var2);
+                            }else{
+                                valorDirLista2 = FileMan.EtiquetaLocalidad.get(var2);
                             }
-                            //if(valorDirLista1.startsWith("$"))
-                            //    valorDirLista1 = valorDirLista1.substring(1);
-                            //if(valorDirLista2.startsWith("$"))
-                               // valorDirLista2 = valorDirLista2.substring(1);
-                            bw.append(valorDirLista1+"    ");
+                            if(valorDirLista1.startsWith("$"))
+                                valorDirLista1 = valorDirLista1.substring(1);
+                            if(valorDirLista2.startsWith("$"))
+                               valorDirLista2 = valorDirLista2.substring(1);
+                            bw.append(valorDirLista1.toUpperCase()+"    ");
                             bw.append(var2);
                             for(int i=0; i< 20- var2.length(); i++)
                                 bw.append(" ");
-                            bw.append(valorDirLista2+"    ");
+                            bw.append(valorDirLista2.toUpperCase()+"    ");
                             bw.newLine();
                             izquierda++;
                             derecha++;
@@ -344,13 +374,15 @@ public class FileMan extends JFrame{
                         bw.append(var1);
                         for(int i=0; i< 20- var1.length(); i++)
                             bw.append(" ");
-                        String valorDirLista1 = FileMan.constantesYvariables.get(var1);
-                        if( valorDirLista1 == null){
+                        String valorDirLista1;
+                        if( FileMan.constantesYvariables.containsKey(var1)){
+                            valorDirLista1 = FileMan.constantesYvariables.get(var1);
+                        }else{
                             valorDirLista1 = FileMan.EtiquetaLocalidad.get(var1);
                         }
                         if(valorDirLista1.startsWith("$"))
                             valorDirLista1 = valorDirLista1.substring(1);
-                        bw.append(valorDirLista1+"    ");
+                        bw.append(valorDirLista1.toUpperCase()+"    ");
                     }    
                 }
             }
@@ -458,9 +490,13 @@ public class FileMan extends JFrame{
         this.opCodesFile.clear();
         this.instrucciones.clear();
         this.constantesYvariables.clear();
+        this.EtiquetaLocalidad.clear();
         this.errores.clear();
+        this.poolOfConstAndVar.clear();
         this.dirToWrite = null;
-        this.fileName = null;   
+        this.fileName = null;
+        this.firstOrg.clear();
+        this.fileName = "";
     }
     public ArrayList<String> listOfErrorToText(){ //Convierte la lista de errores a una lista con String de errores
         ArrayList<String> errorListString = new ArrayList<>();

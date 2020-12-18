@@ -179,43 +179,56 @@ public class FileMan extends JFrame{
                                 bw.newLine();
                                 lastDir=org[1];
                             }else{
-                                
-                                try{
-                                    Datos data = datosQ.poll();
+                                Datos data = datosQ.poll();
+                                if(data.opcode.equals("0")){
                                     lastDir = data.localidad;
                                     bw.append(String.valueOf(i+1)+"|"+data.localidad.toUpperCase()+"|");
-                                    if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
-                                        String opcode = compLST.poll();
-                                        opcode = opcode.substring(1, 3);
-                                        bw.append( opcode );
-                                        contadorTabs++;
-                                    }else{
-                                        String opcode = compLST.poll();
-                                        opcode = opcode.substring(1);
-                                        bw.append(opcode +" ");
-                                        contadorTabs++;
-                                        opcode = compLST.poll();
-                                        opcode = opcode.substring(0,2);
-                                        bw.append(opcode);
-                                        contadorTabs++;
+                                    for(int j=0;j<data.operandos.size();j++){
+                                        String operando = data.operandos.get(j);
+                                        if(operando.startsWith("$"))
+                                            operando=operando.substring(1);
+                                        bw.append(operando+" ");
                                     }
-                                    if(!data.direccionamiento.equals("inh")){
-
-                                        while(!compLST.peek().startsWith("-"))
-                                            bw.append(" "+compLST.poll());
-                                        contadorTabs++;
-
-                                    }else{
-                                        contadorTabs =(contadorTabs*2)+1;
-                                        for(int y=0 ; y<16-contadorTabs ; y++)
-                                            bw.append(" ");
-                                    }
-                                    
-                                }catch (NullPointerException e){
-                                        
-                                }
-                                bw.append("\t\t\t\t"+lineaToPrint);
+                                    bw.append("\t\t\t   "+lineaToPrint);
                                     bw.newLine();
+                                }else{
+                                    try{
+                                        
+                                        lastDir = data.localidad;
+                                        bw.append(String.valueOf(i+1)+"|"+data.localidad.toUpperCase()+"|");
+                                        if(compLST.peek().startsWith("-") && compLST.peek().endsWith("-")){
+                                            String opcode = compLST.poll();
+                                            opcode = opcode.substring(1, 3);
+                                            bw.append( opcode );
+                                            contadorTabs++;
+                                        }else{
+                                            String opcode = compLST.poll();
+                                            opcode = opcode.substring(1);
+                                            bw.append(opcode +" ");
+                                            contadorTabs++;
+                                            opcode = compLST.poll();
+                                            opcode = opcode.substring(0,2);
+                                            bw.append(opcode);
+                                            contadorTabs++;
+                                        }
+                                        if(!data.direccionamiento.equals("inh")){
+
+                                            while(!compLST.peek().startsWith("-"))
+                                                bw.append(" "+compLST.poll());
+                                            contadorTabs++;
+
+                                        }else{
+                                            contadorTabs =(contadorTabs*2)+1;
+                                            for(int y=0 ; y<16-contadorTabs ; y++)
+                                                bw.append(" ");
+                                        }
+
+                                    }catch (NullPointerException e){
+
+                                    }
+                                    bw.append("\t\t\t\t"+lineaToPrint);
+                                    bw.newLine();
+                                }    
                              }
                              break;
                         case 3://etiqueta
@@ -230,9 +243,11 @@ public class FileMan extends JFrame{
                                bw.append(lineaToPrint);
                             bw.newLine();
                             break;
-                        case 4:// ende
+                        case 4:// end
                             for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                 bw.append(" ");
+                            if(lastDir.startsWith("$"))
+                                lastDir = lastDir.substring(1);
                             bw.append(String.valueOf(i+1)+"|"+lastDir.toUpperCase());
                             bw.append("                    ");//4 tabs
                             bw.append(lineaToPrint);
@@ -244,6 +259,8 @@ public class FileMan extends JFrame{
                             try{
                                 for(int k=0; k< maxString-String.valueOf(i+1).length(); k++)
                                     bw.append(" ");
+                                if(lastDir.startsWith("$"))
+                                    lastDir = lastDir.substring(1);
                                 bw.append(String.valueOf(i+1)+"|"+lastDir+" ");
                                 //
                                 Datos data = datosQ.poll();
@@ -270,6 +287,7 @@ public class FileMan extends JFrame{
                 System.out.println(arrayOfVarToSort.get(i));
             }
             if(arrayOfVarToSort.size() > 0){//Caso De Mas de UnA Variable
+                bw.newLine();
                 bw.append("SYMBOL TABLE:  Total Entries=   "+arrayOfVarToSort.size());
                 bw.newLine();
                 if(arrayOfVarToSort.size()%2 == 0){ //Si hay variables pares
@@ -472,9 +490,13 @@ public class FileMan extends JFrame{
         this.opCodesFile.clear();
         this.instrucciones.clear();
         this.constantesYvariables.clear();
+        this.EtiquetaLocalidad.clear();
         this.errores.clear();
+        this.poolOfConstAndVar.clear();
         this.dirToWrite = null;
-        this.fileName = null;   
+        this.fileName = null;
+        this.firstOrg.clear();
+        this.fileName = "";
     }
     public ArrayList<String> listOfErrorToText(){ //Convierte la lista de errores a una lista con String de errores
         ArrayList<String> errorListString = new ArrayList<>();

@@ -503,6 +503,7 @@ public class CompiladorASC {
         for(int i=0;i<datos2.size();i++){
             if(datos2.get(i).etiqueta!=null){
                 dato=datos2.get(i);
+                System.out.println(dato.etiqueta+" "+dato.localidad);
                 fileASC.EtiquetaLocalidad.put(dato.etiqueta,dato.localidad);
             }
         }

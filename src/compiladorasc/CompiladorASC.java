@@ -39,7 +39,10 @@ public class CompiladorASC {
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
             //imprimirArray();
+            if(etiquetas.size()!=0)
+                initEtiq();
             //imprimirArrayLST();
+            //imprimirEtiquetas();
             file.opCodesFile = this.compilacion;
         }
         else{
@@ -89,12 +92,15 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
                 break;
             case 3://Etiquetas
+                while(linea.endsWith(" ")){
+                    linea=linea.substring(0,linea.length()-1);
+                }
                 etiqueta.add(linea);
                 //etiquetas.add(linea);
                 break;
@@ -111,7 +117,7 @@ public class CompiladorASC {
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
-                        //dato.ImprimirDatos();
+                        dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
                         datos2.add(dato);
                     }
@@ -166,11 +172,11 @@ public class CompiladorASC {
                             buscador=element.operandos.get(i);
                             if(datos2.get(j).etiqueta!=null){
                                 if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
-                                compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
-                                compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
-                                compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
-                                compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
-                                break;
+                                    compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                    compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
+                                    compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                    compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
+                                    break;
                                 }
                             }     
                         }
@@ -178,6 +184,7 @@ public class CompiladorASC {
                     }
                     if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
                         buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
+                            //System.out.println(fileASC.constantesYvariables.get(element.operandos.get(i)));
                             if(buscador.length() <= 2){
                                 compilacion.add(buscador.toUpperCase());
                                 compilacionLST.add(buscador.toUpperCase());
@@ -295,6 +302,11 @@ public class CompiladorASC {
             System.out.println(compilacionLST.get(i));
     }
 
+    public void imprimirEtiquetas(){
+        for(int i=0;i<etiquetas.size();i++)
+            System.out.println(etiquetas.get(i));
+    }
+    
 
     public void SecondCheck(FileMan file){//Segunda pasada  
         int i, dif1,dif2,newBin,decimal=0,n=0,j,x, index=0,nuevaLoc; 
@@ -410,7 +422,7 @@ public class CompiladorASC {
     }
 
     public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
-        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’)( ),_]*)$");
+        Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’')( ),_]*)$");
         Pattern espaciosBlanco = Pattern.compile("^\\s*$");
         Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
@@ -445,8 +457,9 @@ public class CompiladorASC {
                     else{
                         Matcher com=comentariosUnicamente.matcher(linea);
                         Boolean ban = com.find();
-                        if(!ban)
+                        if(!ban){
                             etiquetas.add(linea);
+                        }
                     }    
                 }            
             } 
@@ -484,6 +497,28 @@ public class CompiladorASC {
         linea =builder.toString();
         
         return linea;
+    }
+    public void initEtiq(){
+        Datos dato=null;
+        for(int i=0;i<datos2.size();i++){
+            if(datos2.get(i).etiqueta!=null){
+                dato=datos2.get(i);
+                System.out.println(dato.etiqueta+" "+dato.localidad);
+                fileASC.EtiquetaLocalidad.put(dato.etiqueta,dato.localidad);
+            }
+        }
+    
+    }
+    public static void resetStaticValues(){
+        CompiladorASC.compilacion.clear();
+        CompiladorASC.compilacionLST.clear();
+        CompiladorASC.datos2.clear();
+        CompiladorASC.saltos.clear();
+        CompiladorASC.lst.clear();
+        CompiladorASC.etiquetas.clear();
+        CompiladorASC.fileASC =  new FileMan();
+        
+        
     }
     
 }

@@ -43,13 +43,17 @@ public class Datos {
                 this.operandos.add(" ");//Al no tener operandos se rellena con un espacio vacio 
                 //Trataremos los opcode de las instrucciones 
                 this.opcode=file.readOpcodes(this.mnemonico,this.direccionamiento); //Con este método obtenemos el opcode de la instrucción.
+                if(this.opcode.equals("--")){
+                    file.errores.add(new ErrorASC(5,linea));
+                    return;
+                }    
                 if(this.opcode.length()==4)//Si el opcode tiene 16 bits, le sumamos 2 localidades de memoria en caso contrario solo le agragamos 1 localidad
                     this.contador+=2;
                 else
                     this.contador+=1;
             }
             else{//Si el mnemonico no es valido se generará el error tipo 4
-                file.errores.add(new ErrorASC(4,linea));
+                file.errores.add(new ErrorASC(4,linea-1));
             }
         }
         
@@ -141,8 +145,11 @@ public class Datos {
                                 this.mnemonico=parts[0].toLowerCase();
                                 if(parts[1].charAt(0)=='#'){
                                     valor = file.constantesYvariables.get(parts[1].substring(1));
-                                    if(valor.substring(1, 3).equals("00"))
-                                        valor="$"+valor.substring(3);
+                                    if(valor.substring(1, 3).equals("00")){
+                                        if(parts[0].toLowerCase().equals("ldx")){}
+                                        else    
+                                            valor="$"+valor.substring(3);
+                                    }
                                     if((valor.length()==3||valor.length()==5))
                                         this.direccionamiento="imm";
                                     else{
@@ -155,7 +162,6 @@ public class Datos {
                                     if(valor.substring(1, 3).equals("00")){
                                         if(checkDIR(parts[0])){
                                             valor="$"+valor.substring(3);
-                                            System.out.println(parts[0]+" "+valor);
                                         }
                                     }
                                     if((valor.length()==3))
@@ -206,15 +212,14 @@ public class Datos {
                         }                    
                         else{
                             this.localidad = SetLocalidad(contador);
-                            if(parts[1].contains("’")){
+                            if(parts[1].contains("’")||parts[1].contains("'")){
                                 if(parts[1].charAt(0)=='#'){
-                                    System.out.println(parts[1].charAt(2));
                                     character = parts[1].charAt(2);
                                     ascii = (int)character;
                                     this.direccionamiento="imm";
                                     this.mnemonico=parts[0].toLowerCase();
                                     this.opcode=file.readOpcodes(parts[0].toLowerCase(),"imm");
-                                    this.contador+=1;
+                                    this.contador+=2;
                                     this.operandos.add(String.valueOf(ascii));
                                     return;
                                 }    
@@ -235,7 +240,6 @@ public class Datos {
                                 this.operandos.add(parts[1]);
                             }
                             else{
-                                System.out.println(parts[1]);
                                 if(parts[0].toLowerCase().equals("ldx")){
                                     if(parts[1].charAt(0)=='#')
                                         if(parts[1].charAt(1)=='$'){
@@ -324,7 +328,7 @@ public class Datos {
         System.out.println("OpCode: "+this.opcode);
         System.out.println("Localidad: "+this.localidad);
         if(this.etiqueta!=null)
-            System.out.println("Etiqueta: "+this.etiqueta); 
+            System.out.println("Etiqueta:"+this.etiqueta); 
     }
     public String SetLocalidad(int localidad){
         String localHex;

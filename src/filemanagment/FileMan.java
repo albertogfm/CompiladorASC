@@ -138,7 +138,8 @@ public class FileMan extends JFrame{
                     contador++;
                 }
             }
-            bw.append("</div> \n </body> \n </html>");
+            bw.append("</div> \n <div class=\"codigo\"><opcode>Este color indica que se trata del OPCODE</opcode><br>"
+                    + "<oper>Este color indica que se trata de los OPERANDOS</oper></div></body> \n </html>");
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();

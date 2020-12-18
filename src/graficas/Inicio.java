@@ -181,6 +181,7 @@ public class Inicio extends javax.swing.JFrame {
                 
                 file.escribirArchivoLST(compi.datos2);
                 file.escribirArchivoS19();
+                file.escribirArchivoS19html();
                 //System.out.println("END IN"+FileMan.endInLine);
                 //System.out.println("ORG IN"+FileMan.firstOrg.get(0));
                 //int sizeOfPool = FileMan.poolOfConstAndVar.size();

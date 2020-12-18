@@ -59,6 +59,9 @@ public class FileMan extends JFrame{
     }
     //Este es el método que hace la escritura del archivo S19 con formato pedido
     public void escribirArchivoS19(){
+        for(int i=0;i< CompiladorASC.compilacionLST.size();i++){
+            System.out.println(CompiladorASC.compilacionLST.get(i));
+        }
         try {
             File file = new File(this.fileName+".S19");
             if (!file.exists()) {
@@ -86,6 +89,108 @@ public class FileMan extends JFrame{
                     contador++;
                 }
             }     
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    // Metodo para escribir el htmlS19
+    public void escribirArchivoS19html(){
+        try {
+            File file = new File(this.fileName+".html");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file,false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            int localidadStart = 8000;
+            int numLinAppend = this.opCodesFile.size()/15;
+            int resto = this.opCodesFile.size()%15;
+            int contador = 0;
+            bw.append("<!DOCTYPE html> \n <html> \n <head> \n <link rel=\"stylesheet\" href=\""+this.fileName +".css\">"
+                    + "</head> <header><h1>Archivo S19<h1></header>"
+                    + "<body>"
+                    + "<div class=\"codigo\">");
+            for (int i=0; i< numLinAppend ; i++){
+                bw.append("<linea><"+localidadStart+"></linea>" );
+                
+                
+                for(int j=0 ;j<15;j++){
+                    if(CompiladorASC.compilacionLST.get(contador).length()== 4){
+                    bw.append("<opcode> "+this.opCodesFile.get(contador)+" </opcode>" );
+                    }else{
+                        bw.append(" <oper> "+this.opCodesFile.get(contador)+" </oper> ");
+                    }
+                    contador++;
+                }
+                bw.append("\n <br>");
+                localidadStart+=10;
+            }
+            if(resto > 0){
+                bw.append("<linea><"+localidadStart+"></opcode>" );
+                for (int i=0;i<resto ; i++){
+                    if(CompiladorASC.compilacionLST.get(contador).length()== 4){
+                    bw.append("<opcode> "+this.opCodesFile.get(contador)+" </opcode>" );
+                    }else{
+                        bw.append(" <oper> "+this.opCodesFile.get(contador)+" </oper> ");
+                    }
+                    contador++;
+                }
+            }
+            bw.append("</div> \n </body> \n </html>");
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            File file = new File(this.fileName+".css");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file,false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("html {\n" +
+            "	background-color:#F0F0F0 ;\n" +
+            "}\n" +
+            "h1 {\n" +
+            "	color: #000;\n" +
+            "}\n" +
+            ".codigo {\n" +
+            "  background-color: #C6C8D1;\n" +
+            "  margin: 1rem;\n" +
+            "  padding-left: 20rem;\n" +
+            "  padding-top: 2rem;\n" +
+            "  padding-bottom: 2rem;\n" +
+            "  border: 2px solid #000000;\n" +
+            "\n" +
+            "}\n" +
+            "header{\n" +
+            "	background-color: #C6C8D1;\n" +
+            "	margin: 20px;\n" +
+            "	text-align: center;\n" +
+            "	border: 2px solid #000000;\n" +
+            "	/* height: 50px; */\n" +
+            "}\n" +
+            "header h1{\n" +
+            "	color:#000000;\n" +
+            "}\n" +
+            "\n" +
+            "opcode{\n" +
+            "	font-family: Arial;\n" +
+            "	font-size: 25px;\n" +
+            "	color:#044C80;\n" +
+            "}\n" +
+            "oper{\n" +
+            "	font-family: Arial;\n" +
+            "	font-size: 25px;\n" +
+            "	color:#2396EB;\n" +
+            "}\n" +
+            "linea{\n" +
+            "	font-family: Arial, Bold;\n" +
+            "	font-size: 28px;\n" +
+            "	color:#070B52;\n" +
+            "}");
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();

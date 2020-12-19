@@ -9,10 +9,11 @@ import errores.*;
  *
  * @author alber
  */
-public class CompiladorASC {
+public class CompiladorASC {//Con esta clase hacemos la compilación del programa
+    //Se declaran todos los datos que utilizarémos 
     static FileMan fileASC = new FileMan();
     public Queue <String> etiqueta = new LinkedList<>();
-    public static ArrayList <String> etiquetas = new ArrayList<>();//Etiquetas declaradas
+    public static ArrayList <String> etiquetas = new ArrayList<>();
     public static ArrayList <String> compilacion = new ArrayList<>();
     public static ArrayList <String> compilacionLST = new ArrayList<>();
     public static ArrayList <Datos> datos2 = new ArrayList<>();
@@ -21,31 +22,31 @@ public class CompiladorASC {
     public static ArrayList <Datos> lst = new ArrayList <>();
      
     
-    public void Compilador(FileMan file){//Recibe un FileMan
+    public void Compilador(FileMan file){//Recibe el archivo para leerlo y tratar errores 
         ArrayList <String> lineasArc = file.lineasArchivoASC;
         boolean endNotExist = true, repetir2=true;
         int i;
         checkIfMarginCorrect(file);
-        for(i=0;i<lineasArc.size();i++){
+        for(i=0;i<lineasArc.size();i++){//Con este ciclo, leeremos todas las lineas del archivo.
             String linea = lineasArc.get(i);
-            endNotExist = select(linea,i);
+            endNotExist = select(linea,i);//Cuando se detecte un end en el archivo, dejaremos de leer.
             if(endNotExist==false)
                 break;
         }
         if(endNotExist)
-            file.errores.add(new ErrorASC(10,lineasArc.size()));
-        //prePass(file);    
-        if(file.errores.isEmpty()){     
+            file.errores.add(new ErrorASC(10,lineasArc.size()));//Si nunca se leyo un end en el archivo, entonces se genera dicho error.
+        //prePass(file);  PRUEBAS
+        if(file.errores.isEmpty()){//Si a lo largo de la lectura del archivo nunca se detectaron errores, entonces se procede a generar el archivo LST y S19.
             firstCheck(fileASC.instrucciones,file);
             SecondCheck(file);
-            //imprimirArray();
+            //imprimirArray(); PRUEBAS
             if(etiquetas.size()!=0)
                 initEtiq();
-            //imprimirArrayLST();
-            //imprimirEtiquetas();
+            //imprimirArrayLST(); PRUEBAS
+            //imprimirEtiquetas(); PRUEBAS 
             file.opCodesFile = this.compilacion;
         }
-        else{
+        else{//Si se detecto por lo menos un error, no se genera el archivo LST ni el S19.
             System.out.println("Se detectaron "+file.errores.size()+" errores :C");
             for(int j=0 ; j< file.errores.size(); j++){
                 System.out.println(file.errores.get(j).toString());
@@ -53,14 +54,15 @@ public class CompiladorASC {
             
         }
     }
-    
+    //Se tratan los comentarios, espacios en blancos y datos que puedan estar en la línea de la instrucción 
     public boolean select (String linea, int numLinea){
+    //Expresiones regulares para identificar comentarios y espacios en blanco    
         Datos dato;
         int caso;
         Validador checker = new Validador();
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         Matcher onlycomentario = comentariosUnicamente.matcher(linea);
-        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");
         Matcher comentario = comentarios.matcher(linea);
         Pattern espaciosBlanco = Pattern.compile("^( )*$");
         Matcher espacios = espaciosBlanco.matcher(linea);
@@ -75,22 +77,23 @@ public class CompiladorASC {
         caso = checker.Reconoce(linea,numLinea);//Solo linea 
         switch(caso){
             case 1://Constante y variable
-                linea=deleteSpacesIntermedium(linea);
+                linea=deleteSpacesIntermedium(linea);//Elimina espacios intermedios
                 String[] parts = linea.split(" ");
                 if(parts[1].equals("EQU")){
                     fileASC.constantesYvariables.put(parts[0],parts[2]);
                     FileMan.poolOfConstAndVar.add(parts[0]);
                 }
                 break;
-            case 2://Intrucción 
-                while(linea.startsWith(" ")){
+            case 2://Instrucción 
+                while(linea.startsWith(" ")){ //Verifica si al principio de la línea de instrucción hay espacios en blanco 
                     linea=linea.substring(1);
                 }
-                while(linea.endsWith(" ")){
+                while(linea.endsWith(" ")){//Verifica si al final de la línea de instrucción hay espacios en blanco 
                     linea=linea.substring(0,linea.length()-1);
                 }
+                //Imprimirá los datos encontrados
                 linea=deleteSpacesIntermedium(linea);
-                dato = new Datos(linea,etiqueta,etiquetas,numLinea);
+                dato = new Datos(linea,etiqueta,etiquetas,numLinea);//Se crea el dato
                     if(dato.opcode!=null){
                         dato.ImprimirDatos();
                         fileASC.instrucciones.add(dato);
@@ -102,7 +105,7 @@ public class CompiladorASC {
                     linea=linea.substring(0,linea.length()-1);
                 }
                 etiqueta.add(linea);
-                //etiquetas.add(linea);
+                //etiquetas.add(linea); PRUEBAS
                 break;
             case 4://Fin 
                 FileMan.endInLine = numLinea;
@@ -114,6 +117,7 @@ public class CompiladorASC {
                 while(linea.endsWith(" ")){
                     linea=linea.substring(0,linea.length()-1);
                 }
+                //Imprimirá los datos encontrados
                 linea=deleteSpacesIntermedium(linea);
                 dato = new Datos(linea,etiqueta,etiquetas,numLinea);
                     if(dato.opcode!=null){
@@ -124,7 +128,7 @@ public class CompiladorASC {
         }
         return true;
     }
-
+    //Se realiza la primera pasada en la compilación 
     public void firstCheck(Queue <Datos> datos, FileMan file){ //Agregar elementos a la pila
         int i,j,u=0;
         boolean rep= true;
@@ -135,9 +139,9 @@ public class CompiladorASC {
                 rep=false;
             String buscador;
             Pattern TagorCons = Pattern.compile("^([A-Za-z]+)([0-9]*)");//Verificar si el operando es un valor numérico o una etiqueta
-            if(element.mnemonico.equals("Directiva FCB")||element.mnemonico.equals("RESET")){}
+            if(element.mnemonico.equals("Directiva FCB")||element.mnemonico.equals("RESET")){}//Identifica si es una directiva FCB o un RESET
             else{
-            if(element.opcode.length() == 2){ //Opcode
+            if(element.opcode.length() == 2){ // Se tratan los tamaños de los opcode que pueda tener el mnemónico y se agregan al array
                 compilacion.add(element.opcode.toUpperCase());
                 compilacionLST.add("-"+element.opcode.toUpperCase()+"-");
             }
@@ -149,8 +153,8 @@ public class CompiladorASC {
                 }
             }
             int limite=element.operandos.size();
-            for(i=0;i<limite;i++){ //Operandos
-                if(element.mnemonico.equals("Directiva FCB")){
+            for(i=0;i<limite;i++){ //Se tratan los operandos y se agregan al array
+                if(element.mnemonico.equals("Directiva FCB")){//Tratamiento de compilación para la directiva FCB
                     compilacion.add(element.operandos.get(0).substring(1).toUpperCase());
                     compilacion.add(element.operandos.get(1).substring(1).toUpperCase());
                     compilacionLST.add(element.operandos.get(0).substring(1).toUpperCase());
@@ -164,17 +168,17 @@ public class CompiladorASC {
                     if(mnemonicosREL2(element.mnemonico)){
                         compilacion.add("--");//Se deja el espacio en blanco
                         compilacionLST.add("--");
-                        saltos.add(element);
+                        saltos.add(element);//Agregar dicha instrucción para realizar el salto en la segunda pasada.
                         break;
                     }
                     if(etiquetas.contains(element.operandos.get(i))){ //Si es una etiqueta buscar su localidad
                         for(j=0;j<datos2.size();j++){
                             buscador=element.operandos.get(i);
                             if(datos2.get(j).etiqueta!=null){
-                                if(datos2.get(j).etiqueta.equals(buscador)){//Cuando la encuentra
-                                    compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                if(datos2.get(j).etiqueta.equals(buscador)){//Cuando encuentra la localidad de la etiqueta, se guarda y compila.
+                                    compilacion.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Se agrega la localidad en la tabla de compilacion
                                     compilacion.add(datos2.get(j).localidad.substring(2).toUpperCase());
-                                    compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());//Agrego la localidad en la tabla de compilacion
+                                    compilacionLST.add(datos2.get(j).localidad.substring(0,2).toUpperCase());
                                     compilacionLST.add(datos2.get(j).localidad.substring(2).toUpperCase());
                                     break;
                                 }
@@ -182,9 +186,9 @@ public class CompiladorASC {
                         }
                         
                     }
-                    if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){ 
+                    if(fileASC.constantesYvariables.containsKey(element.operandos.get(i))){//Si es una constante o varible, buscamos el valor para compilarlo. 
                         buscador=fileASC.constantesYvariables.get(element.operandos.get(i));
-                            //System.out.println(fileASC.constantesYvariables.get(element.operandos.get(i)));
+                            //System.out.println(fileASC.constantesYvariables.get(element.operandos.get(i))); PRUEBA
                             if(buscador.length() <= 2){
                                 compilacion.add(buscador.toUpperCase());
                                 compilacionLST.add(buscador.toUpperCase());
@@ -198,31 +202,31 @@ public class CompiladorASC {
                     }
                 }
                 else{
-                    Convertidor(element.operandos.get(i));
+                    Convertidor(element.operandos.get(i));//Si no es ni etiqueta, ni varible ni constante entonces es un valor numerico que convertiremos a hexadecimal en caso de que sea décimal.
                 }
             }
         }
     }
 
-    public void Convertidor(String numero){ //Checa si el operando es hexadecimal, si no la convierte
+    public void Convertidor(String numero){ //Checa si el operando es hexadecimal, si no la convierte y los agrega al array
         String nuevo, convertido;
         int convertidor;      
         //¿Qué caso es?                                      
-        if(numero.charAt(0)=='$' || numero.substring(0, 2).equals("#$")){
+        if(numero.charAt(0)=='$' || numero.substring(0, 2).equals("#$")){//Si contiene el simbolo $ entonces solo se compila debido a que es hexadecimal.
             if(numero.charAt(0)=='$'){
                 nuevo = numero.substring(1);
                 if(nuevo.length()==1 || nuevo.length()==3)
                     nuevo='0'+nuevo;
                 if(nuevo.length() == 2){
-                    compilacion.add(nuevo.toUpperCase());
+                    compilacion.add(nuevo.toUpperCase());//Opcode de 8 bits
                     compilacionLST.add(nuevo.toUpperCase());
                     return;
                 }
                 else{
-                    compilacion.add(nuevo.substring(0,2).toUpperCase());//Opcode 8bits
-                    compilacion.add(nuevo.substring(2).toUpperCase());//Opcode 16 bits
-                    compilacionLST.add(nuevo.substring(0,2).toUpperCase());//Opcode 8bits
-                    compilacionLST.add(nuevo.substring(2).toUpperCase());//Opcode 16 bits                   
+                    compilacion.add(nuevo.substring(0,2).toUpperCase());//Opcode 16 bits
+                    compilacion.add(nuevo.substring(2).toUpperCase());
+                    compilacionLST.add(nuevo.substring(0,2).toUpperCase());
+                    compilacionLST.add(nuevo.substring(2).toUpperCase());                 
                     return;
                 }    
             }
@@ -231,12 +235,12 @@ public class CompiladorASC {
             nuevo = numero.substring(2);
             if(nuevo.length()==1 || nuevo.length()==3)
                     nuevo='0'+nuevo;
-            if(nuevo.length() == 2){
+            if(nuevo.length() == 2){//Opcode de 8 bits
                 compilacion.add(nuevo.toUpperCase());
                 compilacionLST.add(nuevo.toUpperCase());
                 return;
             }
-            else{
+            else{//Opcode de 16 bits
                 compilacion.add(nuevo.substring(0,2).toUpperCase());
                 compilacion.add(nuevo.substring(2).toUpperCase());
                 compilacionLST.add(nuevo.substring(0,2).toUpperCase());
@@ -244,7 +248,7 @@ public class CompiladorASC {
                 return;
             }    
         }
-         //Convertir   
+        //Si no contiene el simbolo $ convertimos el número decimal a hexadecimal.   
         else{
             if(numero.charAt(0)=='#')
                 numero=numero.substring(1);
@@ -252,11 +256,11 @@ public class CompiladorASC {
             convertido = Integer.toHexString(convertidor);
             if(convertido.length()==1 || convertido.length()==3)
                 convertido= '0'+convertido;
-            if(convertido.length() <=2 ){
+            if(convertido.length() <=2 ){//Opcode de 8 bits
                 compilacion.add(convertido.toUpperCase());
                 compilacionLST.add(convertido.toUpperCase());
             }    
-            else{
+            else{//Opcode de 16 bits
                 compilacion.add(convertido.substring(0,2).toUpperCase());
                 compilacion.add(convertido.substring(2).toUpperCase()); 
                 compilacionLST.add(convertido.substring(0,2).toUpperCase());
@@ -266,7 +270,7 @@ public class CompiladorASC {
     }
 
 
-    public boolean mnemonicosREL2(String instruccion){
+    public boolean mnemonicosREL2(String instruccion){//Este método identifica los mnemonicos que pueden tener salto a otra localidad, es decir todos los mnemonicos relativos
         this.relativos.add("bcc");
         this.relativos.add("bcs");
         this.relativos.add("beq");
@@ -292,23 +296,24 @@ public class CompiladorASC {
             return true;
         return false;
     }
-    public void imprimirArray(){
+    //PRUEBAS
+    public void imprimirArray(){//Imprime en el S19
         for(int i=0;i<compilacion.size();i++)
             System.out.println(compilacion.get(i));
     }
     
-    public void imprimirArrayLST(){
+    public void imprimirArrayLST(){//Imprime en el LST
         for(int i=0;i<compilacionLST.size();i++)
             System.out.println(compilacionLST.get(i));
     }
 
-    public void imprimirEtiquetas(){
+    public void imprimirEtiquetas(){//Imprime etiquetas
         for(int i=0;i<etiquetas.size();i++)
             System.out.println(etiquetas.get(i));
     }
     
 
-    public void SecondCheck(FileMan file){//Segunda pasada  
+    public void SecondCheck(FileMan file){//Segunda pasada, en donde haremos el calculo del salto
         int i, dif1,dif2,newBin,decimal=0,n=0,j,x, index=0,nuevaLoc; 
         String localidad=" ",hex;
         boolean rep = true;
@@ -317,30 +322,30 @@ public class CompiladorASC {
             if(saltos.peek()==null){
                 break;
             }
-            Datos element = saltos.poll(); //Desencolamos
+            Datos element = saltos.poll(); //Desencolamos las instrucciones que tengan salto
             for(i=0; i<element.operandos.size(); i++){
                 String etiqueta = element.operandos.get(i);
                 if(etiquetas.contains(etiqueta)){ //Identifica si la etiqueta existe en nuestra lista
                     for(j=0;j<datos2.size();j++){
                         if(datos2.get(j).etiqueta!=null)
                             if(datos2.get(j).etiqueta.equals(etiqueta)){
-                                localidad=datos2.get(j).localidad;
+                                localidad=datos2.get(j).localidad;//Obtenemos la localidad donde haremos el salto
                             }   
                     }
                 } 
             }
             if((Integer.parseInt(element.localidad,16)>Integer.parseInt(localidad,16))||(Integer.parseInt(element.localidad,16)==Integer.parseInt(localidad,16))){//Salto negativo
-                dif1=Integer.parseInt(element.localidad,16);//Lo que estamos analizando
+                dif1=Integer.parseInt(element.localidad,16);//Convertimos a décimal la localidad de la instruccion para realizar la operación de resta
                 if(element.operandos.size()==1)
                     dif1+=1;
                 else
                     dif1+=3;
-                dif2=Integer.parseInt(localidad,16);//Localidad donde se encuentra la etiqueta
+                dif2=Integer.parseInt(localidad,16);//Convertimos a décimal la localidad donde se encuentra la etiqueta
                 int diferenciaNegativa=(dif2-dif1)-1;//Diferencia de localidades
                 if(diferenciaNegativa==-127){
-                    file.errores.add(new ErrorASC(8,element.numLinea));
+                    file.errores.add(new ErrorASC(8,element.numLinea));//Si la diferencia es menor a -127, generamos el error.  
                 }
-                else{
+                else{//Calculo del complemento a2
                     diferenciaNegativa=-1*diferenciaNegativa;
                     String binario = Long.toBinaryString(diferenciaNegativa);
                     while(binario.length()<8){
@@ -350,7 +355,7 @@ public class CompiladorASC {
                     decimal=binarioDec(newBin);
                     hex=Integer.toHexString(decimal);
                     for(x=0;x<compilacion.size();x++){
-                        if(compilacion.get(x).equals("--")){
+                        if(compilacion.get(x).equals("--")){//En nuestra lista de compilación buscamos las celdas que esten vacias para insertar el valor.
                             compilacion.set(x,hex.toUpperCase());
                             compilacionLST.set(x,hex.toUpperCase());
                             break;
@@ -360,7 +365,7 @@ public class CompiladorASC {
             }     
 
             else{//Salto positivo
-                dif1=Integer.parseInt(element.localidad,16);
+                dif1=Integer.parseInt(element.localidad,16);//Convertimos a décimal la localidad para realizar la operación aritmética
                 dif2=Integer.parseInt(localidad,16);
                 if(element.operandos.size()==1)
                     if(element.opcode.length()==2)
@@ -373,7 +378,7 @@ public class CompiladorASC {
                     else
                         dif1+=4;
                 int diferenciaPositiva=(dif2-dif1)-1;
-                if(diferenciaPositiva==128){
+                if(diferenciaPositiva==128){//Si la diferencia es mayor a 128, generamos el error.  
                     file.errores.add(new ErrorASC(8,element.numLinea));
                 }
                 else{
@@ -395,7 +400,7 @@ public class CompiladorASC {
         }
     }
 
-    public String twosCompliment(String bin) {
+    public String twosCompliment(String bin) {//Método que realiza el complemento a2 de nuestro numero binario.
         int suma1, suma2=1,total;
         StringBuilder bina = new StringBuilder(bin);
         for(int i=0;i<bin.length();i++){
@@ -410,7 +415,7 @@ public class CompiladorASC {
         return Long.toBinaryString(total);
     }
 
-    public int binarioDec(int binario){
+    public int binarioDec(int binario){//Método que realiza la conversión de binario a decimal
        int resto, decimal=0, i=0;
        while (binario != 0){
            resto = binario % 10;
@@ -421,10 +426,10 @@ public class CompiladorASC {
        return decimal;
     }
 
-    public void checkIfMarginCorrect(FileMan file){//Error instrucción sin espacios
+    public void checkIfMarginCorrect(FileMan file){//Con este método le damos formato a nuestras lineas del archivo para procesarlas corectamente
         Pattern Textoespaciado = Pattern.compile("^(( )+[a-zA-Z0-9(\\$#)?(’')( ),_]*)$");
         Pattern espaciosBlanco = Pattern.compile("^\\s*$");
-        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");//Matcher y Patern de Comentarios y espacios en blanco
+        Pattern comentarios = Pattern.compile("(()(\\*)+[A-Za-z0-9_]*)");
         Pattern comentariosUnicamente = Pattern.compile("^(( )*(\\*)[a-zA-Z0-9\\*_,( )]*)$");
         for(int i = 0 ; i< file.lineasArchivoASC.size();i++){
             String linea=file.lineasArchivoASC.get(i);
@@ -441,20 +446,20 @@ public class CompiladorASC {
             }
             Matcher checker2= espaciosBlanco.matcher(linea);
             Boolean check2= checker2.find();
-            if(!check2){
+            if(!check2){//Entra en caso de que la linea no sea una linea vacia
                 linea = deleteSpacesIntermedium(linea);
                 Matcher checker= Textoespaciado.matcher(linea);
                 Boolean check1= checker.find();
-                if(!check1){//Si no hace match con el regex de instrucción
-                    if(linea.contains(" ")){//Checar si es una etiqueta
+                if(!check1){//Si la linea no tiene espacio al principio entra, ya que nos interesa guardar las variables, constantes y variables
+                    if(linea.contains(" ")){//Si la linea contiene espacios intermedios siginifica que es la declaración de una variable o constante.
                         String [] fragmentarlinea= linea.split(" ");
                         if(fragmentarlinea[1].equals("EQU") || fragmentarlinea[1].equals("equ")||(fragmentarlinea[0].toLowerCase().equals("reset")&&fragmentarlinea[1].toLowerCase().equals("fcb"))){
                         }
                         else{
-                            file.errores.add(new ErrorASC(9,i));//Error de "margen
+                            file.errores.add(new ErrorASC(9,i));//Error de margen
                         }        
                     }
-                    else{
+                    else{//Si no contiene espacios intermedios, entonces es la declaración de una etiqueta.
                         Matcher com=comentariosUnicamente.matcher(linea);
                         Boolean ban = com.find();
                         if(!ban){
@@ -465,7 +470,7 @@ public class CompiladorASC {
             } 
         }
     }    
-    public String deleteSpacesIntermedium(String linea){
+    public String deleteSpacesIntermedium(String linea){//Elimina los espacios que existan entre el principio y final de linea
         int sub;
         if(linea.charAt(linea.length()-1) == ' '){
             String lineaF = " ";
@@ -498,7 +503,7 @@ public class CompiladorASC {
         
         return linea;
     }
-    public void initEtiq(){
+    public void initEtiq(){//Inicializa la lista de etiquetas con sus respectivas localidades
         Datos dato=null;
         for(int i=0;i<datos2.size();i++){
             if(datos2.get(i).etiqueta!=null){
@@ -509,7 +514,7 @@ public class CompiladorASC {
         }
     
     }
-    public static void resetStaticValues(){
+    public static void resetStaticValues(){//Reinciciar todo el proceso.
         CompiladorASC.compilacion.clear();
         CompiladorASC.compilacionLST.clear();
         CompiladorASC.datos2.clear();

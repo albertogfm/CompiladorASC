@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author 1ZW05LA_RS3
  */
-public class Validador {
+public class Validador { //Con esta clase validamos qué tipo de linea se esta leyendo en el programa a través de expresiones regulares
     Error error;
     public int Reconoce(String instruccion,int linea){
         instruccion=deleteSpacesIntermedium(instruccion);
@@ -32,33 +32,33 @@ public class Validador {
         }
             
         if(consyvar.find()){
-            //System.out.println("consyvar"+instruccion);
+            //System.out.println("consyvar"+instruccion); PRUEBAS
             return 1;
         }
 
         if(finPograma.find()){
-            //System.out.println("fin"+instruccion);
+            //System.out.println("fin"+instruccion); PRUEBBAS
             return 4;
         }
         
         if(instruc.find()){
-            //System.out.println("ins"+instruccion);
+            //System.out.println("ins"+instruccion); PRUEBAS
             return 2;
         }
         
         if(etiq.find()){
-            //System.out.println("etiq"+instruccion);
+            //System.out.println("etiq"+instruccion); 
             //if(file.readNemon(instruccion.toLowerCase())){
             //    System.out.println("Entre "+instruccion);
             //    file.errores.add(new ErrorASC(9,linea));
-            //}
+            //} PRUEBAS
             return 3;
             }
         
         return 5;
     }
     
-        public String deleteSpacesIntermedium(String linea){
+        public String deleteSpacesIntermedium(String linea){ //Borramos espacios en blanco que esten en medio de una instrucción 
         int sub;
         if(linea.charAt(linea.length()-1) == ' '){
             String lineaF = " ";

@@ -26,7 +26,7 @@ public class ArchivoRegex{ //CLASE COMPILADOR
             Matcher inh = expresionINH.matcher(mnemonico);//Valida la expresión INHERENTE
             Matcher imm = expresionIMM.matcher(mnemonico);//Valida la expresión INMEDIATO
             Matcher ext = expresionEXT.matcher(mnemonico);//Valida la expresión EXTENDIDO
-            Matcher dir = expresionDIR.matcher(mnemonico);//Valida la expresión DIRCETO
+            Matcher dir = expresionDIR.matcher(mnemonico);//Valida la expresión DIRECTO
             Matcher rel = expresionREL.matcher(mnemonico);//Valida la expresión RELATIVO       
             Matcher indx = expresionINDX.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "X"
             Matcher indy = expresionINDY.matcher(mnemonico);//Valida la expresión INDEXADO RESPECTO A "Y"

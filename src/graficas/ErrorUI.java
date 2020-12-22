@@ -14,6 +14,7 @@ import javax.swing.*;
  *
  * @author alber
  */
+//Crea una ventana que despliega los errores en pantalla
 public class ErrorUI extends JPanel {
     protected JTextArea textArea;
     private final static String newline = "\n";

@@ -501,6 +501,7 @@ public class FileMan extends JFrame{
             }
             
         }
+    //Recibe los nemónicos y devuelve si tiene nemónico o no
     public String readOpcodes(String nemon, String modo) {
         File file = new File(".\\files\\opcodes\\"+modo+".csv");
         if(!file.exists()){
@@ -573,6 +574,7 @@ public class FileMan extends JFrame{
         }
         return fc.getDirectory();
     }
+    //Escribe el archivo txt de errores s hay
     public void escribirErrores(){
         try {
             File file = new File(this.fileName+"-Errores-Al-Compilar"+".txt");
@@ -591,6 +593,7 @@ public class FileMan extends JFrame{
             e.printStackTrace();
         }
     }
+    //Hace reset de los elementos fileman
     public void resetFileman(){ //Elimina todo el contenido de FileMan
         this.lineasArchivoASC.clear();
         this.opCodesFile.clear();
@@ -604,6 +607,7 @@ public class FileMan extends JFrame{
         this.firstOrg.clear();
         this.fileName = "";
     }
+    
     public ArrayList<String> listOfErrorToText(){ //Convierte la lista de errores a una lista con String de errores
         ArrayList<String> errorListString = new ArrayList<>();
         errorListString.add("******************************************************************\n");

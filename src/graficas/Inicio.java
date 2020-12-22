@@ -156,6 +156,7 @@ public class Inicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileBActionPerformed
+        //Este es el boton de elegir el archivo
         String dir= file.fileSelector();
         if(dir == null){
             this.verif=false;
@@ -167,7 +168,7 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_fileBActionPerformed
 
     private void compileBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileBActionPerformed
-        
+        //Ese es el boton de compilar
         if(this.verif){
             System.out.println("Compilado");
             System.out.println("Compilado");
@@ -182,14 +183,7 @@ public class Inicio extends javax.swing.JFrame {
                 file.escribirArchivoLST(compi.datos2);
                 file.escribirArchivoS19();
                 file.escribirArchivoS19html();
-                //System.out.println("END IN"+FileMan.endInLine);
-                //System.out.println("ORG IN"+FileMan.firstOrg.get(0));
-                //int sizeOfPool = FileMan.poolOfConstAndVar.size();
-                //System.out.println("CONST AND VAR : "+sizeOfPool);
                 
-                //for(int j=0 ; j<sizeOfPool; j++){
-                 //   System.out.println(j+".-"+FileMan.poolOfConstAndVar.poll());
-                //}
                 JOptionPane.showMessageDialog(this,"El código fuente fue compilado con éxito","    COMPILADO",2);
             
             }else{
